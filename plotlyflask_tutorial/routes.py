@@ -5,7 +5,7 @@ import dash
 from dash import Dash, html, Input, Output, dcc, MATCH, ALL, State
 import plotly.graph_objects as go
 import dash_dangerously_set_inner_html
-from flask_login import login_required, current_user, user_accessed
+from flask_login import login_required, current_user
 import dash_bootstrap_components as dbc
 import numpy as np
 import sys
