@@ -660,115 +660,114 @@ def calculate_matricies():
 def render_dashboard(userInfo):
     global DH
     DH = [json.loads(userInfo)]
-    if len(DH) > 0:
-        ALFAS.clear()
-        THETAS.clear()
-        SLIDERS.clear()
-        LIMITATIONS.clear()
-        LIMIT_INFOS.clear()
-        FOR_USER_ANGLES2.clear()
-        FOR_USER_ANGLES.clear()
-        Rs.clear()
-        Ds.clear()
-        UHLY.clear()
-        INPUTS.clear()
-        MAX_ANGLES.clear()
-        TRAJECTORY_X.clear()
-        TRAJECTORY_Y.clear()
-        TRAJECTORY_Z.clear()
-        layout.pop()
-        layout.pop()
-        layout.pop()
+    ALFAS.clear()
+    THETAS.clear()
+    SLIDERS.clear()
+    LIMITATIONS.clear()
+    LIMIT_INFOS.clear()
+    FOR_USER_ANGLES2.clear()
+    FOR_USER_ANGLES.clear()
+    Rs.clear()
+    Ds.clear()
+    UHLY.clear()
+    INPUTS.clear()
+    MAX_ANGLES.clear()
+    TRAJECTORY_X.clear()
+    TRAJECTORY_Y.clear()
+    TRAJECTORY_Z.clear()
+    layout.pop()
+    layout.pop()
+    layout.pop()
 
-        graph = html.Div([html.Div('Trajectory planner', className="trajectory_planner"),dcc.Graph(id='robot_graph', figure={}), html.Button('Clear trajectory', id='clear_value', n_clicks=0, className='btn btn-outline-primary'),], className="robot_graph")
-        panel = html.Div([html.Div('Control panel', className='ovladaci_panel'),html.Div([html.Div([html.Div('Current position:'),
-                    html.Div('X: ' ,id='akt-pos-x'),
-                    html.Div('Y: ' ,id='akt-pos-y'),
-                    html.Div('Z: ' ,id='akt-pos-z')], className='akt-pos'),
-                html.Div([html.Div('New position:'),
-                    dcc.Input(className="novaPoziciaButton",
-                        id="novX",
-                        type="number",
-                        placeholder="X",
-                        ),
-                    dcc.Input(className="novaPoziciaButton",
-                        id="novY",
-                        type="number",
-                        placeholder="Y",
-                        ),
-                    dcc.Input(className="novaPoziciaButton",
-                        id="novZ",
-                        type="number",
-                        placeholder="Z",
-                        )], 
-                    className='nov-pos'),], className='set_position'),
-                    html.Button('Compute IK', id='submit-val', n_clicks=0, className='btn btn-primary')], className='panel')
+    graph = html.Div([html.Div('Trajectory planner', className="trajectory_planner"),dcc.Graph(id='robot_graph', figure={}), html.Button('Clear trajectory', id='clear_value', n_clicks=0, className='btn btn-outline-primary'),], className="robot_graph")
+    panel = html.Div([html.Div('Control panel', className='ovladaci_panel'),html.Div([html.Div([html.Div('Current position:'),
+                html.Div('X: ' ,id='akt-pos-x'),
+                html.Div('Y: ' ,id='akt-pos-y'),
+                html.Div('Z: ' ,id='akt-pos-z')], className='akt-pos'),
+            html.Div([html.Div('New position:'),
+                dcc.Input(className="novaPoziciaButton",
+                    id="novX",
+                    type="number",
+                    placeholder="X",
+                    ),
+                dcc.Input(className="novaPoziciaButton",
+                    id="novY",
+                    type="number",
+                    placeholder="Y",
+                    ),
+                dcc.Input(className="novaPoziciaButton",
+                    id="novZ",
+                    type="number",
+                    placeholder="Z",
+                    )], 
+                className='nov-pos'),], className='set_position'),
+                html.Button('Compute IK', id='submit-val', n_clicks=0, className='btn btn-primary')], className='panel')
 
+
+    for i in DH[0]:
+        THETAS.append(i[0] * 0.0174532925)
+        ALFAS.append(i[1] * 0.0174532925)
+        Rs.append(i[2])
+        Ds.append(i[3])
+        MAX_ANGLES.append(360)
+        FOR_USER_ANGLES2.append([])
+
+    for i in range(0, len(THETAS)):
+        slider = dcc.Slider(0,MAX_ANGLES[i], id={'type': 'slider', 'index':i}, value=0,  marks={
+    0: {'label': '0°'},
+    45: {'label': '45°'},
+    90: {'label': '90°'},
+    135: {'label': '135°'},
+    180: {'label': '180°'},
+    225: {'label': '225°'},
+    270: {'label': '270°'},
+    315: {'label': '315°'},
+    360: {'label': '360°'},
+},)
+        empty_div = html.Div(id={'type': 'input-output', 'index': i}) 
+        input = dcc.Input(id={'type': 'input', 'index':i},type="number",placeholder="Max angle in °",className='angle_input')
+        slider_output = html.Div([html.Div(id={'type': 'slider-output', 'index':i}), input], className='limitations')
+        SLIDERS.append(html.Div([slider_output, slider, empty_div], className='slider'))
+        UHLY.append(0)
     
-        for i in DH[0]:
-            THETAS.append(i[0] * 0.0174532925)
-            ALFAS.append(i[1] * 0.0174532925)
-            Rs.append(i[2])
-            Ds.append(i[3])
-            MAX_ANGLES.append(360)
-            FOR_USER_ANGLES2.append([])
     
-        for i in range(0, len(THETAS)):
-            slider = dcc.Slider(0,MAX_ANGLES[i], id={'type': 'slider', 'index':i}, value=0,  marks={
-        0: {'label': '0°'},
-        45: {'label': '45°'},
-        90: {'label': '90°'},
-        135: {'label': '135°'},
-        180: {'label': '180°'},
-        225: {'label': '225°'},
-        270: {'label': '270°'},
-        315: {'label': '315°'},
-        360: {'label': '360°'},
-    },)
-            empty_div = html.Div(id={'type': 'input-output', 'index': i}) 
-            input = dcc.Input(id={'type': 'input', 'index':i},type="number",placeholder="Max angle in °",className='angle_input')
-            slider_output = html.Div([html.Div(id={'type': 'slider-output', 'index':i}), input], className='limitations')
-            SLIDERS.append(html.Div([slider_output, slider, empty_div], className='slider'))
-            UHLY.append(0)
-        
-        
-        precision_slider = dcc.Slider(0,2, step=1,id={'type': 'slider_limit', 'index':i}, value=1,  marks={
-        0: {'label': 'Low', 'style': {'color': '#40E0D0 '}},
-        1: {'label': 'Medium', 'style': {'color': '#E67E22 '}},
-        2: {'label': 'High', 'style': {'color': '#FF5733'}}},)
-        limit_text = html.Div('Set presicion (number of) calculations', className="limit_text")
-        limit_div = html.Div(id={'type': 'slider_limit_output', 'index':i})
-        LIMIT_INFOS.append(limit_text) 
-        LIMIT_INFOS.append(precision_slider)
-        LIMIT_INFOS.append(limit_div)
-        mode = dcc.RadioItems(id='speed_mode',options=[
-                                {'label': ' Constant', 'value': 1},
-                                {'label': ' Slow-down', 'value': 2},
-                                {'label': ' Speed-up', 'value': 3},],
-                                value=1, inline=False, className="mode_flex")
-        mode_div = html.Div([html.Div('Speed mode of your end-effector', className="set_speed_mode_text") , mode, html.Div(id='speed_output')], className="mode_input")
-        check_box = dcc.Checklist(id='my-checklist', options=[{'label': ' Negative angle exception', 'value': True,'disabled':False}],
-        value=[True])
-        check_box_output = html.Div(id='my-checklist-output')
+    precision_slider = dcc.Slider(0,2, step=1,id={'type': 'slider_limit', 'index':i}, value=1,  marks={
+    0: {'label': 'Low', 'style': {'color': '#40E0D0 '}},
+    1: {'label': 'Medium', 'style': {'color': '#E67E22 '}},
+    2: {'label': 'High', 'style': {'color': '#FF5733'}}},)
+    limit_text = html.Div('Set presicion (number of) calculations', className="limit_text")
+    limit_div = html.Div(id={'type': 'slider_limit_output', 'index':i})
+    LIMIT_INFOS.append(limit_text) 
+    LIMIT_INFOS.append(precision_slider)
+    LIMIT_INFOS.append(limit_div)
+    mode = dcc.RadioItems(id='speed_mode',options=[
+                            {'label': ' Constant', 'value': 1},
+                            {'label': ' Slow-down', 'value': 2},
+                            {'label': ' Speed-up', 'value': 3},],
+                            value=1, inline=False, className="mode_flex")
+    mode_div = html.Div([html.Div('Speed mode of your end-effector', className="set_speed_mode_text") , mode, html.Div(id='speed_output')], className="mode_input")
+    check_box = dcc.Checklist(id='my-checklist', options=[{'label': ' Negative angle exception', 'value': True,'disabled':False}],
+    value=[True])
+    check_box_output = html.Div(id='my-checklist-output')
 
-        round = dcc.Checklist(id='my-checklist2', options=[{'label': ' Round results', 'value': True,'disabled':False}],
-        value=False)
-        roundDiv = html.Div(id='my-checklist2-output')
+    round = dcc.Checklist(id='my-checklist2', options=[{'label': ' Round results', 'value': True,'disabled':False}],
+    value=False)
+    roundDiv = html.Div(id='my-checklist2-output')
 
-        button = html.Button('Get angles', id='get_angles', n_clicks=0, className='btn btn-outline-success')
-        button_output = html.Div(id='get_angles_output')
-        button_arrays = dcc.RadioItems(id='button_arrays',options=[
-                                {'label': ' List of lists', 'value': 1},
-                                {'label': ' List for each joint', 'value': 2}], value=1)
+    button = html.Button('Get angles', id='get_angles', n_clicks=0, className='btn btn-outline-success')
+    button_output = html.Div(id='get_angles_output')
+    button_arrays = dcc.RadioItems(id='button_arrays',options=[
+                            {'label': ' List of lists', 'value': 1},
+                            {'label': ' List for each joint', 'value': 2}], value=1)
 
-        mode_div_combined = html.Div([mode_div, html.Div(LIMIT_INFOS, className="limitka"),html.Div([check_box, check_box_output], className="checkbox"), html.Div([button,button_output,button_arrays, round, roundDiv], className='button_group')], className="choose_mode")
-        info = html.Div([panel, html.Div('Set starting joint angles with sliders and limitations of your robot with maximum angles each joint can rotate about.', className='info') ,html.Div(SLIDERS, className="angle_controls")], className="info_a_uhly")
-        
-        
-        layout.append(graph)
-        layout.append(info)
-        layout.append(mode_div_combined)
-        
+    mode_div_combined = html.Div([mode_div, html.Div(LIMIT_INFOS, className="limitka"),html.Div([check_box, check_box_output], className="checkbox"), html.Div([button,button_output,button_arrays, round, roundDiv], className='button_group')], className="choose_mode")
+    info = html.Div([panel, html.Div('Set starting joint angles with sliders and limitations of your robot with maximum angles each joint can rotate about.', className='info') ,html.Div(SLIDERS, className="angle_controls")], className="info_a_uhly")
+    
+    
+    layout.append(graph)
+    layout.append(info)
+    layout.append(mode_div_combined)
+    
     
     return redirect('/dash')
 
