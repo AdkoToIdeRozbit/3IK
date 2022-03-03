@@ -214,7 +214,8 @@ camera.add(cylinder1)
 var a = camera.getWorldDirection(vector)
 var angle = scale(a.y, -1, 1, Math.PI / 2, -Math.PI / 2)
 cylinder1.rotation.x = angle;
-cylinder1.position.set((-$('.go').width() / 10) - ((750 - $('.go').height()) / 10), 70, - 300)
+var dis = -75 * $('.go').width() / $('.go').height()
+cylinder1.position.set(dis, 70, - 300)
 
 let cylinder2 = new THREE.Mesh(new THREE.CylinderBufferGeometry(radius, radius, height, 32), new THREE.MeshPhongMaterial({ color: 0x90ee90 }))
 cylinder2.castShadow = true
@@ -226,7 +227,7 @@ scene.add(camera)
 camera.add(cylinder2)
 console.log($('.go').height())
 var angle = scale(a.z, 1, -1, Math.PI, 0)
-cylinder2.position.set((-$('.go').width() / 10) - ((750 - $('.go').height()) / 10), 55, - 300)
+cylinder2.position.set(dis, 55, - 300)
 cylinder2.rotation.z = 3.14 / 2
 cylinder2.rotation.y = 3.14 / 2
 
@@ -239,7 +240,7 @@ cylinder3.userData.notDestroy = true
 scene.add(camera)
 camera.add(cylinder3)
 var angle = scale(a.z, -1, 1, Math.PI / 2, -Math.PI / 2)
-cylinder3.position.set((-$('.go').width() / 10) - ((750 - $('.go').height()) / 10), 40, - 300)
+cylinder3.position.set(dis, 40, - 300)
 cylinder3.rotation.z = 3.14 / 2
 
 let geometry = new THREE.SphereGeometry(4, 32, 16);
@@ -251,7 +252,7 @@ sphere.userData.sphere = true
 sphere.userData.notDestroy = true
 scene.add(camera)
 camera.add(sphere)
-sphere.position.set((-$('.go').width() / 10) - ((750 - $('.go').height()) / 10), 25, - 300)
+sphere.position.set(dis, 25, - 300)
 
 
 const orbit = new OrbitControls(camera, renderer2.domElement);

@@ -182,23 +182,20 @@ def init_callbacks(dash_app):
             calculate_matricies()
             if 'submit' in button_id:
                 if (isinstance(novX, float) or isinstance(novX, int)) and (isinstance(novY, float) or isinstance(novY, int)) and (isinstance(novZ, float) or isinstance(novZ, int)):
+                    xBodka = (novX - X[-1]) / precision # higher number more precise:+_
+                    yBodka = (novY - Y[-1]) / precision
+                    zBodka = (novZ - Z[-1]) / precision
                     if speedmode == 1:
-                        xBodka = (novX - X[-1]) / precision # higher number more precise:+_
-                        yBodka = (novY - Y[-1]) / precision
-                        zBodka = (novZ - Z[-1]) / precision
                         alert = get_constant_jacobian(novX, novY, novZ, xBodka, yBodka, zBodka)
                     
-                    if speedmode == 2:
+                    elif speedmode == 2:
                         alert = get_slow_down_jacobian(novX, novY, novZ, True)
                     
-                    if speedmode == 3:
-                        xBodka = (novX - X[-1]) / precision # higher number more precise:+_
-                        yBodka = (novY - Y[-1]) / precision
-                        zBodka = (novZ - Z[-1]) / precision
+                    elif speedmode == 3:
                         get_slow_down_jacobian(novX, novY, novZ, True)
                         get_slow_down_jacobian(novX, novY, novZ, False)
                         alert = get_speed_up_jacobian(novX, novY, novZ)
-            
+                
             
             if 'clear' in button_id:
                 FOR_USER_ANGLES.clear()
