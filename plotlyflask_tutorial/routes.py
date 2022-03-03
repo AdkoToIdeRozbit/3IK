@@ -1,4 +1,3 @@
-
 from flask import render_template, redirect
 from flask import current_app as app, Blueprint
 import dash
@@ -177,53 +176,53 @@ def init_callbacks(dash_app):
         Y.append(0)
         Z.append(0)
         alert = False
-        if len(DH) > 0:
-            calculate_matricies()
-            if 'submit' in button_id:
-                if (isinstance(novX, float) or isinstance(novX, int)) and (isinstance(novY, float) or isinstance(novY, int)) and (isinstance(novZ, float) or isinstance(novZ, int)):
-                    if speedmode == 1:
-                        xBodka = (novX - X[-1]) / precision # higher number more precise:+_
-                        yBodka = (novY - Y[-1]) / precision
-                        zBodka = (novZ - Z[-1]) / precision
-                        alert = get_constant_jacobian(novX, novY, novZ, xBodka, yBodka, zBodka)
-                    
-                    if speedmode == 2:
-                        alert = get_slow_down_jacobian(novX, novY, novZ, True)
-                    
-                    if speedmode == 3:
-                        xBodka = (novX - X[-1]) / precision # higher number more precise:+_
-                        yBodka = (novY - Y[-1]) / precision
-                        zBodka = (novZ - Z[-1]) / precision
-                        get_slow_down_jacobian(novX, novY, novZ, True)
-                        get_slow_down_jacobian(novX, novY, novZ, False)
-                        alert = get_speed_up_jacobian(novX, novY, novZ)
-            
-            
-            if 'clear' in button_id:
-                FOR_USER_ANGLES.clear()
-                for i in FOR_USER_ANGLES2:
-                    i.clear()
-                TRAJECTORY_X.clear()
-                TRAJECTORY_Y.clear()
-                TRAJECTORY_Z.clear()
-
-            fig = go.Figure(data=go.Scatter3d(x=X, y=Y, z=Z,name="Kinematic chain", marker=dict(
-            size=4,
-            colorscale='Viridis'),   # choose a colorscale
-            #opacity=0.8), 
-            line=dict(width=10)))
-
-            fig.update_layout(width=700, height=600, scene=dict(xaxis = dict(nticks=4, range=[-30,30],),
-            yaxis = dict(nticks=4, range=[-30,30],),
-            zaxis = dict(nticks=4, range=[0,60],),
-            aspectmode='cube',uirevision="Don't change",))
-            fig.update_layout(margin=dict(r=20, l=10, b=10, t=20))
+        
+        calculate_matricies()
+        if 'submit' in button_id:
             if (isinstance(novX, float) or isinstance(novX, int)) and (isinstance(novY, float) or isinstance(novY, int)) and (isinstance(novZ, float) or isinstance(novZ, int)):
-                fig.add_trace(go.Scatter3d(x=[novX],y=[novY],z=[novZ],name="Required position", marker=dict(
-            size=6,))) 
-            if len(TRAJECTORY_X) > 0 and len(TRAJECTORY_Y) > 0 and len(TRAJECTORY_Z) > 0:
-                fig.add_trace(go.Scatter3d(x=TRAJECTORY_X,y=TRAJECTORY_Y,z=TRAJECTORY_Z,name="End-efector trajectory", marker=dict(
-                        size=3, color='mediumaquamarine'))) #CSS COLORS heheee
+                if speedmode == 1:
+                    xBodka = (novX - X[-1]) / precision # higher number more precise:+_
+                    yBodka = (novY - Y[-1]) / precision
+                    zBodka = (novZ - Z[-1]) / precision
+                    alert = get_constant_jacobian(novX, novY, novZ, xBodka, yBodka, zBodka)
+                
+                if speedmode == 2:
+                    alert = get_slow_down_jacobian(novX, novY, novZ, True)
+                
+                if speedmode == 3:
+                    xBodka = (novX - X[-1]) / precision # higher number more precise:+_
+                    yBodka = (novY - Y[-1]) / precision
+                    zBodka = (novZ - Z[-1]) / precision
+                    get_slow_down_jacobian(novX, novY, novZ, True)
+                    get_slow_down_jacobian(novX, novY, novZ, False)
+                    alert = get_speed_up_jacobian(novX, novY, novZ)
+        
+        
+        if 'clear' in button_id:
+            FOR_USER_ANGLES.clear()
+            for i in FOR_USER_ANGLES2:
+                i.clear()
+            TRAJECTORY_X.clear()
+            TRAJECTORY_Y.clear()
+            TRAJECTORY_Z.clear()
+
+        fig = go.Figure(data=go.Scatter3d(x=X, y=Y, z=Z,name="Kinematic chain", marker=dict(
+        size=4,
+        colorscale='Viridis'),   # choose a colorscale
+        #opacity=0.8), 
+        line=dict(width=10)))
+
+        fig.update_layout(width=700, height=600, scene=dict(xaxis = dict(nticks=4, range=[-30,30],),
+        yaxis = dict(nticks=4, range=[-30,30],),
+        zaxis = dict(nticks=4, range=[0,60],),
+        aspectmode='cube',uirevision="Don't change",))
+        fig.update_layout(margin=dict(r=20, l=10, b=10, t=20))
+        if (isinstance(novX, float) or isinstance(novX, int)) and (isinstance(novY, float) or isinstance(novY, int)) and (isinstance(novZ, float) or isinstance(novZ, int)):
+            fig.add_trace(go.Scatter3d(x=[novX],y=[novY],z=[novZ],name="Required position", marker=dict(
+        size=6,))) 
+        if len(TRAJECTORY_X) > 0 and len(TRAJECTORY_Y) > 0 and len(TRAJECTORY_Z) > 0:
+            fig.add_trace(go.Scatter3d(x=TRAJECTORY_X,y=TRAJECTORY_Y,z=TRAJECTORY_Z,name="End-efector trajectory", marker=dict(
+                    size=3, color='mediumaquamarine'))) #CSS COLORS heheee
 
         
         fig.update_layout({
