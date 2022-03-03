@@ -12,17 +12,11 @@ import sys
 import json
 import math
 
-global count
-count = 0
-global precision
 precision = 30
-global speed_mode
 speedmode = 1
-
-global round_result
 round_result = False
-global negative_exception
 negative_exception = True
+
 FOR_USER_ANGLES = []
 FOR_USER_ANGLES2 = []
 UHLY_zaciatok = []
@@ -282,9 +276,9 @@ def init_callbacks(dash_app):
         State({'type': 'slider_limit', 'index': MATCH}, 'id'))
 
     def sldier_limnit(value, id):
+        global precision
         if value == 0:
             text = 'Low precision is on average 8 calculations per centimeter of trajectory. Longer trajectories than 15 centimeters on constant speed mode are not advised.'
-            global precision
             precision = 15
         if value == 1:
             text = 'Medium precision is on average 14 calculations per centimeter of trajectory.'
@@ -307,7 +301,7 @@ def init_callbacks(dash_app):
         Output('my-checklist-output', 'children'),
         Input('my-checklist', 'value'),)
 
-    def display(value):
+    def disply(value):
         global negative_exception
         if value:
             negative_exception = True
@@ -321,13 +315,12 @@ def init_callbacks(dash_app):
         Output('my-checklist2-output', 'children'),
         Input('my-checklist2', 'value'),)
 
-    def display(value):
+    def displai(value):
         global round_result
         if value:
             round_result = True
         else:
             round_result = False  
-        print(round_result)
         return ''
 
     @dash_app.callback(
@@ -663,55 +656,55 @@ def calculate_matricies():
         dis_from_0.append(dis)
 
 
-count = 0
 @app.route("/processUserInfo/<string:userInfo>", methods=['POST'])
 def render_dashboard(userInfo):
     global DH
     DH = [json.loads(userInfo)]
-    ALFAS.clear()
-    THETAS.clear()
-    SLIDERS.clear()
-    LIMITATIONS.clear()
-    LIMIT_INFOS.clear()
-    FOR_USER_ANGLES2.clear()
-    FOR_USER_ANGLES.clear()
-    Rs.clear()
-    Ds.clear()
-    UHLY.clear()
-    INPUTS.clear()
-    MAX_ANGLES.clear()
-    TRAJECTORY_X.clear()
-    TRAJECTORY_Y.clear()
-    TRAJECTORY_Z.clear()
-    layout.pop()
-    layout.pop()
-    layout.pop()
-
-    graph = html.Div([html.Div('Trajectory planner', className="trajectory_planner"),dcc.Graph(id='robot_graph', figure={}), html.Button('Clear trajectory', id='clear_value', n_clicks=0, className='btn btn-outline-primary'),], className="robot_graph")
-    panel = html.Div([html.Div('Control panel', className='ovladaci_panel'),html.Div([html.Div([html.Div('Current position:'),
-                html.Div('X: ' ,id='akt-pos-x'),
-                html.Div('Y: ' ,id='akt-pos-y'),
-                html.Div('Z: ' ,id='akt-pos-z')], className='akt-pos'),
-            html.Div([html.Div('New position:'),
-                dcc.Input(className="novaPoziciaButton",
-                    id="novX",
-                    type="number",
-                    placeholder="X",
-                    ),
-                dcc.Input(className="novaPoziciaButton",
-                    id="novY",
-                    type="number",
-                    placeholder="Y",
-                    ),
-                dcc.Input(className="novaPoziciaButton",
-                    id="novZ",
-                    type="number",
-                    placeholder="Z",
-                    )], 
-                className='nov-pos'),], className='set_position'),
-                html.Button('Compute IK', id='submit-val', n_clicks=0, className='btn btn-primary')], className='panel')
-
     if len(DH) > 0:
+        ALFAS.clear()
+        THETAS.clear()
+        SLIDERS.clear()
+        LIMITATIONS.clear()
+        LIMIT_INFOS.clear()
+        FOR_USER_ANGLES2.clear()
+        FOR_USER_ANGLES.clear()
+        Rs.clear()
+        Ds.clear()
+        UHLY.clear()
+        INPUTS.clear()
+        MAX_ANGLES.clear()
+        TRAJECTORY_X.clear()
+        TRAJECTORY_Y.clear()
+        TRAJECTORY_Z.clear()
+        layout.pop()
+        layout.pop()
+        layout.pop()
+
+        graph = html.Div([html.Div('Trajectory planner', className="trajectory_planner"),dcc.Graph(id='robot_graph', figure={}), html.Button('Clear trajectory', id='clear_value', n_clicks=0, className='btn btn-outline-primary'),], className="robot_graph")
+        panel = html.Div([html.Div('Control panel', className='ovladaci_panel'),html.Div([html.Div([html.Div('Current position:'),
+                    html.Div('X: ' ,id='akt-pos-x'),
+                    html.Div('Y: ' ,id='akt-pos-y'),
+                    html.Div('Z: ' ,id='akt-pos-z')], className='akt-pos'),
+                html.Div([html.Div('New position:'),
+                    dcc.Input(className="novaPoziciaButton",
+                        id="novX",
+                        type="number",
+                        placeholder="X",
+                        ),
+                    dcc.Input(className="novaPoziciaButton",
+                        id="novY",
+                        type="number",
+                        placeholder="Y",
+                        ),
+                    dcc.Input(className="novaPoziciaButton",
+                        id="novZ",
+                        type="number",
+                        placeholder="Z",
+                        )], 
+                    className='nov-pos'),], className='set_position'),
+                    html.Button('Compute IK', id='submit-val', n_clicks=0, className='btn btn-primary')], className='panel')
+
+    
         for i in DH[0]:
             THETAS.append(i[0] * 0.0174532925)
             ALFAS.append(i[1] * 0.0174532925)
