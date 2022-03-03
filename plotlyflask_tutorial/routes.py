@@ -1,3 +1,4 @@
+
 from flask import render_template, redirect
 from flask import current_app as app, Blueprint
 import dash
@@ -15,7 +16,6 @@ precision = 30
 speedmode = 1
 round_result = False
 negative_exception = True
-
 FOR_USER_ANGLES = []
 FOR_USER_ANGLES2 = []
 UHLY_zaciatok = []
@@ -186,10 +186,10 @@ def init_callbacks(dash_app):
                         zBodka = (novZ - Z[-1]) / precision
                         alert = get_constant_jacobian(novX, novY, novZ, xBodka, yBodka, zBodka)
                     
-                    elif speedmode == 2:
+                    if speedmode == 2:
                         alert = get_slow_down_jacobian(novX, novY, novZ, True)
                     
-                    elif speedmode == 3:
+                    if speedmode == 3:
                         xBodka = (novX - X[-1]) / precision # higher number more precise:+_
                         yBodka = (novY - Y[-1]) / precision
                         zBodka = (novZ - Z[-1]) / precision
@@ -300,7 +300,7 @@ def init_callbacks(dash_app):
         Output('my-checklist-output', 'children'),
         Input('my-checklist', 'value'),)
 
-    def disply(value):
+    def display(value):
         global negative_exception
         if value:
             negative_exception = True
@@ -314,12 +314,13 @@ def init_callbacks(dash_app):
         Output('my-checklist2-output', 'children'),
         Input('my-checklist2', 'value'),)
 
-    def displai(value):
+    def display(value):
         global round_result
         if value:
             round_result = True
         else:
             round_result = False  
+        print(round_result)
         return ''
 
     @dash_app.callback(
