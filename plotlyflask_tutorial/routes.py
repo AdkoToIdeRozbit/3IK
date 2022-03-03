@@ -172,12 +172,14 @@ def init_callbacks(dash_app):
 
         fig.update_layout(margin=dict(r=20, l=10, b=10, t=20))
 
-        X.append(0)
-        Y.append(0)
-        Z.append(0)
+        calculate_matricies()
+        if len(X) == 0:
+            X.append(0)
+            Y.append(0)
+            Z.append(0)
+
         alert = False
         if len(DH) > 0:
-            calculate_matricies()
             if 'submit' in button_id:
                 if (isinstance(novX, float) or isinstance(novX, int)) and (isinstance(novY, float) or isinstance(novY, int)) and (isinstance(novZ, float) or isinstance(novZ, int)):
                     if speedmode == 1:
