@@ -197,7 +197,7 @@ data-target="#loginModal"> */
   justify-content: space-around;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   .whole_app{
     padding: 2%;
     display: flex;
