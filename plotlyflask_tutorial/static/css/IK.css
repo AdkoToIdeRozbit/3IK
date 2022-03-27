@@ -70,7 +70,7 @@ data-target="#loginModal"> */
   flex-direction: column;
   gap: 40px;
   align-items: center;
-  max-width: 20%;
+  max-width: 30%;
 }
 
 
@@ -117,7 +117,7 @@ data-target="#loginModal"> */
 }
 
 .angle_input{
-  width: 5%;
+  width: 6.9vw !important;
   font-size: 0.85vw;
 }
 
@@ -247,7 +247,7 @@ data-target="#loginModal"> */
   }
 
   .rc-slider-mark-text{
-  font-size: 1.6vw !important;
+    font-size: 1.6vw !important;
   }
 
   .rc-slider-rail, .rc-slider-track {
@@ -271,7 +271,7 @@ data-target="#loginModal"> */
     font-size: 3vw;
   }
   .angle_input{
-    width: 18%;
+    width: 18% !important;
     height: 3.5vw;
     font-size: 2vw;
   }
@@ -282,6 +282,7 @@ data-target="#loginModal"> */
 }
 
 .rc-slider-mark-text{
+  font-size: 0.8vw;
   font-weight: bold;
   color: black;
   opacity: 0.8;
@@ -293,16 +294,6 @@ data-target="#loginModal"> */
 .rc-slider-dot-active{
   background-color: #8ce8ff;
   border-color: #70e1fd;
-}
-
-.rc-slider-mark{
-  font-size: 1.3vw;
-}
- .rc-slider-mark-text{
-   font-size: 1vw;
-  font-weight: bold;
-  color: black;
-  opacity: 0.8;
 }
 
  .angle_controls{

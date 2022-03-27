@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block title %}Help{% endblock %} {% block content%}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/help.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 
 <div class="text-center">
   <h2 class="mt-5 mb-5">Help centre</h2>
@@ -13,7 +14,7 @@
           What is this website good for?
         </h2>
         <div class="position-absolute top-0 right-0 h-100 d-flex align-items-center">
-          <i class="fa fa-plus" aria-hidden="true"></i>
+          <ion-icon class="fa fa-plus" name="add-outline" size="large"></ion-icon>
         </div>
       </div>
     </a>
@@ -62,7 +63,7 @@
           How to draw my kinematic diagram?
         </h2>
         <div class="position-absolute top-0 right-0 h-100 d-flex align-items-center">
-          <i class="fa fa-plus"></i>
+          <ion-icon class="fa fa-plus" name="add-outline" size="large"></ion-icon>
         </div>
       </div>
     </a>
@@ -86,7 +87,7 @@
           I am not sure what to do with axis
         </h2>
         <div class="position-absolute top-0 right-0 h-100 d-flex align-items-center">
-          <i class="fa fa-plus"></i>
+          <ion-icon class="fa fa-plus" name="add-outline" size="large"></ion-icon>
         </div>
       </div>
     </a>
@@ -120,7 +121,7 @@
           What is the right hand rule?
         </h2>
         <div class="position-absolute top-0 right-0 h-100 d-flex align-items-center">
-          <i class="fa fa-plus"></i>
+          <ion-icon class="fa fa-plus" name="add-outline" size="large"></ion-icon>
         </div>
       </div>
     </a>
@@ -146,7 +147,7 @@
           What should I look out for?
         </h2>
         <div class="position-absolute top-0 right-0 h-100 d-flex align-items-center">
-          <i class="fa fa-plus"></i>
+          <ion-icon class="fa fa-plus" name="add-outline" size="large"></ion-icon>
         </div>
       </div>
     </a>
@@ -171,7 +172,7 @@
           Can i see some example robots?
         </h2>
         <div class="position-absolute top-0 right-0 h-100 d-flex align-items-center">
-          <i class="fa fa-plus"></i>
+          <ion-icon class="fa fa-plus" name="add-outline" size="large"></ion-icon>
         </div>
       </div>
     </a>
@@ -189,6 +190,7 @@
     </div>
   </section>
 </section>
+
 
 <!--
 {% if user.is_authenticated %}
