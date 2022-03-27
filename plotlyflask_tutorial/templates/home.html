@@ -792,11 +792,12 @@
     }
   }
 
-  setTimeout(function () {
+  var w = window.innerWidth;
+  if (w < 800) setTimeout(function () {
     animation()
   }, 9000);
 
-  observer.observe(document.querySelector('.add_text2'));
+  if (w >= 800) observer.observe(document.querySelector('.add_text2'));
   var textWrapper = document.querySelector('.ml11 .letters');
   textWrapper.innerHTML = textWrapper.textContent.replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>");
   var textWrapper = document.querySelector('.add_text1');
