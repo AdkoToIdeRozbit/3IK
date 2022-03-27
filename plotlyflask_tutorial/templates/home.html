@@ -15,11 +15,11 @@
 </h1>
 
 {% if not user.is_authenticated %}
-        <button style="position: absolute;right: 7.5%;" type="button" class="btn btn-success" data-toggle="modal"
-            data-target="#loginModal">
-            Login
-        </button>
-        {% endif %}
+<button style="position: absolute;right: 7.5%;" type="button" class="btn btn-success" data-toggle="modal"
+  data-target="#loginModal">
+  Login
+</button>
+{% endif %}
 
 <div style="display: flex;justify-content: space-between;width: 76%;margin: 0 auto;">
 
@@ -673,116 +673,128 @@
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting && count == 0) {
-        count++
-        tl
-          .add({
-            targets: '.letter',
-            opacity: [0, 0],
-            easing: "easeOutExpo",
-            duration: 1000,
-            complete: function (anim) {
-              document.querySelector('.letters').style.opacity = 1
-            }
-          })
-          .add({
-            delay: 1000,
-            targets: '.letter',
-            opacity: [0, 1],
-            easing: "easeOutExpo",
-            duration: 2000,   // 10<x>0 is typewriter effect higher is fader
-            offset: '-=775',
-            delay: (el, i) => 34 * (i + 1),
-          })
-        tl2
-          .add({
-            targets: '.line',
-            scaleY: [0, 1],
-            opacity: [0.5, 1],
-            easing: "easeOutExpo",
-            duration: 1000,
-          })
-          .add({
-            targets: '.line',
-            translateX: [0, 1.01 * document.querySelector('.letters').getBoundingClientRect().width],
-            easing: "easeOutExpo",
-            duration: 1600,
-            delay: 50,
-          })
-          .add({
-            targets: '.line1',
-            opacity: 0,
-            duration: 1000,
-            easing: "easeOutExpo",
-            delay: 50
-          });
-        tl3
-          .add({
-            targets: '.robot_svgs',
-            scale: [1.5, 1],
-            opacity: [0, 1],
-            easing: "easeOutExpo",
-            duration: 2000,
-            delay: 5500,
-            complete: function (anim) {
-              document.querySelector('.robot_svgs').style.opacity = 1
-            }
-          })
-        tl4
-          .add({
-            targets: '.letter1',
-            translateX: [80, 0],
-            translateZ: 0,
-            opacity: [0, 1],
-            easing: "easeOutExpo",
-            duration: 1200,
-            delay: (el, i) => 2500 + 30 * i,
-            begin: function (anim) {
-              document.querySelector('.add_text1').style.opacity = 1
-            },
-          })
-        tl5
-          .add({
-            targets: '.letter2',
-            translateX: [80, 0],
-            translateZ: 0,
-            opacity: [0, 1],
-            easing: "easeOutExpo",
-            duration: 1200,
-            delay: (el, i) => 3500 + 30 * i,
-            begin: function (anim) {
-              document.querySelector('.add_text2').style.opacity = 1
-            },
-          })
-        tl6
-          .add({
-            targets: '.letter3',
-            translateX: [80, 0],
-            translateZ: 0,
-            opacity: [0, 1],
-            easing: "easeOutExpo",
-            duration: 1200,
-            delay: (el, i) => 4500 + 30 * i,
-            begin: function (anim) {
-              document.querySelector('.add_text3').style.opacity = 1
-            },
-          })
-        tl7
-          .add({
-            targets: '.dhs',
-            translateY: [20, 0],
-            translateZ: 0,
-            opacity: [0, 1],
-            easing: "easeOutExpo",
-            duration: 1400,
-            delay: (el, i) => 6000 + 30 * i,
-            begin: function (anim) {
-              document.querySelector('.DH_text').style.opacity = 1
-            },
-          })
-
+        animation()
       }
     });
   });
+
+  function animation() {
+    count++
+    if (count == 1) {
+      tl
+        .add({
+          delay: 800,
+          targets: '.letter',
+          opacity: [0, 0],
+          easing: "easeOutExpo",
+          duration: 1000,
+          begin: function (anim) {
+            document.querySelector('.letters').style.opacity = 1
+          }
+        })
+        .add({
+
+          targets: '.letter',
+          opacity: [0, 1],
+          easing: "easeOutExpo",
+          duration: 2000,   // 10<x>0 is typewriter effect higher is fader
+          offset: '-=775',
+          delay: (el, i) => 34 * (i + 1),
+
+        })
+      tl2
+        .add({
+          targets: '.line',
+          scaleY: [0, 1],
+          opacity: [0.5, 1],
+          easing: "easeOutExpo",
+          duration: 1000,
+        })
+        .add({
+          targets: '.line',
+          translateX: [0, 1.01 * document.querySelector('.letters').getBoundingClientRect().width],
+          easing: "easeOutExpo",
+          duration: 1600,
+          delay: 50,
+        })
+        .add({
+          targets: '.line1',
+          opacity: 0,
+          duration: 1000,
+          easing: "easeOutExpo",
+          delay: 50
+        });
+      tl3
+        .add({
+          targets: '.robot_svgs',
+          scale: [1.5, 1],
+          opacity: [0, 1],
+          easing: "easeOutExpo",
+          duration: 2000,
+          delay: 5500,
+          complete: function (anim) {
+            document.querySelector('.robot_svgs').style.opacity = 1
+          }
+        })
+      tl4
+        .add({
+          targets: '.letter1',
+          translateX: [80, 0],
+          translateZ: 0,
+          opacity: [0, 1],
+          easing: "easeOutExpo",
+          duration: 1200,
+          delay: (el, i) => 2500 + 30 * i,
+          begin: function (anim) {
+            document.querySelector('.add_text1').style.opacity = 1
+          },
+        })
+      tl5
+        .add({
+          targets: '.letter2',
+          translateX: [80, 0],
+          translateZ: 0,
+          opacity: [0, 1],
+          easing: "easeOutExpo",
+          duration: 1200,
+          delay: (el, i) => 3500 + 30 * i,
+          begin: function (anim) {
+            document.querySelector('.add_text2').style.opacity = 1
+          },
+        })
+      tl6
+        .add({
+          targets: '.letter3',
+          translateX: [80, 0],
+          translateZ: 0,
+          opacity: [0, 1],
+          easing: "easeOutExpo",
+          duration: 1200,
+          delay: (el, i) => 4500 + 30 * i,
+          begin: function (anim) {
+            document.querySelector('.add_text3').style.opacity = 1
+          },
+        })
+      tl7
+        .add({
+          targets: '.dhs',
+          translateY: [20, 0],
+          translateZ: 0,
+          opacity: [0, 1],
+          easing: "easeOutExpo",
+          duration: 1400,
+          delay: (el, i) => 6000 + 30 * i,
+          begin: function (anim) {
+            document.querySelector('.DH_text').style.opacity = 1
+          },
+        })
+
+    }
+  }
+
+  setTimeout(function () {
+    animation()
+  }, 9000);
 
   observer.observe(document.querySelector('.add_text2'));
   var textWrapper = document.querySelector('.ml11 .letters');
@@ -814,7 +826,7 @@
 </script>
 <script>
   var textWrapper = document.querySelector('.ml14 .lettersz');
-  textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+  textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letterf'>$&</span>");
   var textWrapper = document.querySelector('.merc');
   textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='mraz'>$&</span>");
   var textWrapper = document.querySelector('.merc2');
@@ -851,7 +863,7 @@
       easing: "easeInOutExpo",
       duration: 900
     }).add({
-      targets: '.ml14 .letter',
+      targets: '.ml14 .letterf',
       opacity: [0, 1],
       translateX: [40, 0],
       translateZ: 0,
