@@ -90,11 +90,15 @@ function ID_function() {
     else if (lines_positions[3].includes("e")) createSphere(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
     for (let i = 0; i < 7; i++) lines_positions.splice(0, 1)
   }
-  if (JOINTS.length > 1) {
-    var compute_button = document.getElementById('compute');
+  var compute_button = document.getElementById('compute');
+  var save_button = document.getElementById('save_diagram');
+  if (DH.length > 0) {
     compute_button.disabled = false;
-    var save_button = document.getElementById('save_diagram');
     save_button.disabled = false;
+  }
+  else {
+    compute_button.disabled = true;
+    save_button.disabled = true;
   }
 
 }
@@ -126,10 +130,14 @@ function onButtonClick() {
     DH.pop();
     i = i - 1
 
-    if (JOINTS.length < 2) {
-      var compute_button = document.getElementById('compute');
+    var compute_button = document.getElementById('compute');
+    var save_button = document.getElementById('save_diagram');
+    if (DH.length > 0) {
+      compute_button.disabled = false;
+      save_button.disabled = false;
+    }
+    else {
       compute_button.disabled = true;
-      var save_button = document.getElementById('save_diagram');
       save_button.disabled = true;
     }
   }
@@ -144,8 +152,17 @@ var JOINTS = []
 const canvas = document.querySelector('#bg')
 const div = document.querySelector('#div')
 
-const Width = window.innerWidth * 0.65;
-const Height = window.innerHeight * 0.8;
+var Width;
+var Height = window.innerHeight * 0.8;
+
+var mq = window.matchMedia("(max-width: 1000px)");
+if (mq.matches) {
+  Width = window.innerWidth * 0.85;
+
+}
+else {
+  Width = window.innerWidth * 0.65;
+}
 
 const camera = new THREE.PerspectiveCamera(30, Width / Height, 1, 1500);
 camera.userData.notDestroy = true
@@ -271,7 +288,7 @@ function scale(number, inMin, inMax, outMin, outMax) {
   return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
 
-//scene.background = new THREE.Color(0xbfd1e5);
+//scene.background = new THREE.Color(0x3A1D21);
 
 function animate() {
   renderer.render(scene, camera);
@@ -740,12 +757,17 @@ window.addEventListener('click', event => {
       draggable = found[0].object
       //console.log(`found draggable ${draggable.userData.name}`)
     }
-    if (JOINTS.length > 1) {
-      var compute_button = document.getElementById('compute');
+    var compute_button = document.getElementById('compute');
+    var save_button = document.getElementById('save_diagram');
+    if (DH.length > 0) {
       compute_button.disabled = false;
-      var save_button = document.getElementById('save_diagram');
       save_button.disabled = false;
     }
+    else {
+      compute_button.disabled = true;
+      save_button.disabled = true;
+    }
+
     if (found[0].object.userData.click1) {
       createCylinder1()
     }

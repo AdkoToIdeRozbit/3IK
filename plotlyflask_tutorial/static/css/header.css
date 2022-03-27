@@ -1,14 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&display=swap");
+
+*{
+  font-family: "Noto Sans TC", sans-serif !important;
+}
+
 header {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  padding: 50px 20px;
   max-height: 100px;
+  padding: 50px 20px;
   background-color: #24252a;
 }
 
 .active{
-  font-weight: bold !important;
+  /*font-weight: bold !important;*/
+  color: #0088a9 !important;
 }
 
 .logo {
@@ -44,6 +51,7 @@ header {
   font-weight: 540;
   font-size: large;
   color: #edf0f1;
+  position: relative;
   text-decoration: none;
 }
 
@@ -69,8 +77,39 @@ header {
   transition: color 0.3s ease 0s;
 }
 
-.nav__links li a:hover {
-  color: #0088a9;
+/*.nav__links li a:hover {
+  color: #0088a9;  hotpink 
+}*/
+
+.nav__links li a::after {
+	content: '';
+	position: absolute;
+	bottom: -10%;
+	left: 0;
+	width: 100%;
+	height: 0.1em;
+	background-color: #0088a9;
+	opacity: 0;
+	transition: opacity 300ms, transform 300ms;
+}
+
+.nav__links li a:hover::after,
+.nav__links li a:focus::after {
+	opacity: 1;
+	transform: translate3d(0, 0.2em, 0);
+}
+
+
+/* Scale from center */
+.nav__links li a::after {
+	opacity: 1;
+	transform: scale(0);
+	transform-origin: center;
+}
+
+.nav__links li a:hover::after,
+.nav__links li a:focus::after{
+	transform: scale(1);
 }
 
 
