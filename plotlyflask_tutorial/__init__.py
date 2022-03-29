@@ -7,6 +7,7 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 DB_NAME = 'database.db'
 
+
 def init_app():
     """Construct core Flask application with embedded Dash app."""
     app = Flask(__name__, instance_relative_config=False)
@@ -21,17 +22,9 @@ def init_app():
     from plotlyflask_tutorial.models import User, Note
     create_database(app)
 
-    
-
     with app.app_context():
-        from . import routes
-
-        from .routes import init_dashboard
-        app = init_dashboard(app)
-
         login_manager = LoginManager()
         login_manager.login_message = False
-        login_manager.login_view = '/log-in'
         login_manager.init_app(app)
 
         @login_manager.user_loader
@@ -40,7 +33,7 @@ def init_app():
 
         return app
 
+
 def create_database(app):
     if not path.exists('website/' + DB_NAME):
         db.create_all(app=app)
-        print('Created Database!')

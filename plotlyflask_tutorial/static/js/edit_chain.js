@@ -72,9 +72,7 @@ function Code(id) {
   createFloor()
   animate()
   for (let i = 0; i < JOINTS.length - 1; i++) calculate_dh(i)
-  const request = new XMLHttpRequest()
-  request.open('POST', `/processUserInfo/${JSON.stringify(DH)}`)
-  request.send()
+  window.localStorage.setItem('DH', JSON.stringify(DH));
 
 }
 

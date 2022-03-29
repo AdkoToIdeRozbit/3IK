@@ -20,12 +20,12 @@
     <nav>
       <ul class="nav__links">
         <li><a href="/">Home</a></li>
-        <li><a href="/dash">Inverse kinematics</a></li>
+        <li><a href="/ik">Inverse kinematics</a></li>
         <li><a href="/dizajn">Design</a></li>
         {% if user.is_authenticated %}
-        <li><a href="/account">My account</a></li>
+        <li><a href="/account">Account</a></li>
         {% else %}
-        <li><a href="#" data-toggle="modal" data-target="#loginModal">My account</a></li>
+        <li><a href="#" data-toggle="modal" data-target="#loginModal">Log in</a></li>
         {% endif %}
         <li><a href="/help">Help</a></li>
       </ul>

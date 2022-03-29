@@ -16,16 +16,7 @@ var button = document.getElementsByClassName("code_button");
 button[0].addEventListener("click", Code, false);
 
 function Code() {
-  var userInfo
-  if (DH.length < 1) {
-    userInfo = "nafing";
-  }
-  else userInfo = DH;
-  console.log(DH)
-  const request = new XMLHttpRequest()
-  request.open('POST', `/processUserInfo/${JSON.stringify(userInfo)}`)
-  request.send()
-  console.log("sent")
+  window.localStorage.setItem('DH', JSON.stringify(DH));
 }
 
 var button = document.getElementById("save_diagram");
@@ -1038,6 +1029,7 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
 
   DH.splice(y, 1)
   DH.splice(y, 0, [theta, alfa, r, d])
+
   return [theta, alfa, r, d]
 }
 

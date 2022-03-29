@@ -7,7 +7,6 @@ from flask_login import (
     login_required,
     logout_user,
     current_user,
-    user_accessed,
 )
 import json
 
@@ -25,7 +24,7 @@ def get_robot_id(robot_id):
         else:
             flash("You are not logged in.", category="error")
 
-    return redirect("/log-in")
+    return redirect("/")
 
 
 @auth.route("/delete-note", methods=["POST"])
@@ -46,7 +45,7 @@ def delete_note():
 @login_required
 def logout():
     logout_user()
-    return redirect("/log-in")
+    return redirect("/")
 
 
 @auth.route("/dizajn", methods=["GET", "POST"])
@@ -133,44 +132,44 @@ def login_help():
     return render_template("help.html", user=current_user)
 
 
-# @auth.route("/dash", methods=["GET", "POST"])
-# def login_dash():
-#     if request.method == "POST":
-#         email = request.form.get("email")
-#         password = request.form.get("password")
-#         first_name = request.form.get("firstName")
-#         password1 = request.form.get("password1")
-#         password2 = request.form.get("password2")
-#         print(first_name, password1, password2)
-#         user = User.query.filter_by(email=email).first()
-#         if user:
-#             if check_password_hash(user.password, password):
-#                 login_user(user, remember=True)
-#                 return redirect("/account")
-#             else:
-#                 flash("Wrong password, try again.", category="error")
-#         else:
-#             flash("Email doesn't belong to any account.", category="error")
+@auth.route("/ik", methods=["GET", "POST"])
+def login_homde():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        first_name = request.form.get("firstName")
+        password1 = request.form.get("password1")
+        password2 = request.form.get("password2")
+        print(first_name, password1, password2)
+        user = User.query.filter_by(email=email).first()
+        if user:
+            if check_password_hash(user.password, password):
+                login_user(user, remember=True)
+                return redirect("/account")
+            else:
+                flash("Wrong password, try again.", category="error")
+        else:
+            flash("Email doesn't belong to any account.", category="error")
 
-#         if user:
-#             flash("Account with this email already exists.", category="error")
-#         elif password1 != password2:
-#             flash("Passwords don't match.", category="error")
-#         elif len(password1) < 3:
-#             flash("Password must be at least 4 characters long", category="error")
+        if user:
+            flash("Account with this email already exists.", category="error")
+        elif password1 != password2:
+            flash("Passwords don't match.", category="error")
+        elif len(password1) < 3:
+            flash("Password must be at least 4 characters long", category="error")
 
-#         else:
-#             new_user = User(
-#                 email=email,
-#                 first_name=first_name,
-#                 password=generate_password_hash(password1, method="sha256"),
-#             )
-#             db.session.add(new_user)
-#             db.session.commit()
-#             login_user(new_user, remember=True)
-#             return redirect("/account")
+        else:
+            new_user = User(
+                email=email,
+                first_name=first_name,
+                password=generate_password_hash(password1, method="sha256"),
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user, remember=True)
+            return redirect("/account")
 
-#     return redirect("/dash")
+    return render_template("js.html", user=current_user)
 
 
 @auth.route("/", methods=["GET", "POST"])
@@ -213,11 +212,16 @@ def login_home():
     return render_template("home.html", user=current_user)
 
 
-@auth.route("/log-in", methods=["GET", "POST"])
-def login():
+@auth.route("/account", methods=["GET", "POST"])
+@login_required
+def logidn_home():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
+        first_name = request.form.get("firstName")
+        password1 = request.form.get("password1")
+        password2 = request.form.get("password2")
+        print(first_name, password1, password2)
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
@@ -228,18 +232,6 @@ def login():
         else:
             flash("Email doesn't belong to any account.", category="error")
 
-    return render_template("login.html", user=current_user)
-
-
-@auth.route("/sign-up", methods=["GET", "POST"])
-def sign_up():
-    if request.method == "POST":
-        email = request.form.get("email")
-        first_name = request.form.get("firstName")
-        password1 = request.form.get("password1")
-        password2 = request.form.get("password2")
-
-        user = User.query.filter_by(email=email).first()
         if user:
             flash("Account with this email already exists.", category="error")
         elif password1 != password2:
@@ -258,4 +250,4 @@ def sign_up():
             login_user(new_user, remember=True)
             return redirect("/account")
 
-    return render_template("signup.html", user=current_user)
+    return render_template("account.html", user=current_user)
