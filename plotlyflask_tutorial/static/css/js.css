@@ -33,7 +33,7 @@ input[type="range"] {
   outline: 0;
 }
 .precision-value{
-  width: 50% !important;
+  width: 30% !important;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -60,7 +60,6 @@ span.change {
 span {
     color:black;
 }
-
 
 .type-output{
   max-width: 300px;
@@ -131,7 +130,7 @@ span {
 .after{
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 50%;
   gap: 2vw;
 }
 
