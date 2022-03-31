@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 
 <head>
   <meta charset="utf-8" />
@@ -14,10 +14,16 @@
 </head>
 
 <body>
-  <header>
+
+  <header style="position: relative;">
     <a class="logo" href="/help"><img src="{{ url_for('static', filename='svg/svg2.svg') }}" alt="logo"></a>
+    <div class="hamburger">
+      <div class="line11"></div>
+      <div class="line22"></div>
+      <div class="line33"></div>
+    </div>
     <nav>
-      <ul class="nav__links">
+      <ul class="nav__links" style="text-align: center;">
         <li><a href="/">Home</a></li>
         <li><a href="/ik">Inverse kinematics</a></li>
         <li><a href="/dizajn">Design</a></li>
@@ -28,6 +34,7 @@
         {% endif %}
         <li><a href="/help">Help</a></li>
       </ul>
+
     </nav>
   </header>
   {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -50,6 +57,7 @@
       </button>
     </div>
   </div>
+
   {% endif %} {% endfor %} {% endif %} {% endwith %}
 
   <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -125,13 +133,14 @@
     </div>
   </div>
   <div class="kontainer">{% block content %} {% endblock %}</div>
-  <div class="footer-basic">
+  <div class="footer-basic" style="position: relative;">
     <footer>
       <div class="social"><a href="https://instagram.com"><i class="icon ion-social-instagram"></i></a><a
           href="https://snapchat.com"><i class="icon ion-social-snapchat"></i></a><a href="https://twitter.com"><i
             class="icon ion-social-twitter"></i></a><a href="https://facebook.com"><i
             class="icon ion-social-facebook"></i></a></div>
-      <p class="copyright">Created with <i class="icon icon ion-ios-heart"></i></i> by Adrián Hochla</p>
+      <p class="copyright">Created with&nbsp<i class="icon icon ion-ios-heart"></i>&nbsp by Adrián Hochla</p>
+      <div id="google_translate_element"></div>
     </footer>
   </div>
 
@@ -157,6 +166,33 @@
     });
   </script>
 
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+    }
+
+    $(".goog-te-gadget").html("");
+  </script>
+
+  <script type="text/javascript"
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <script>
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav__links");
+    const links = document.querySelectorAll(".nav__links li");
+
+    hamburger.addEventListener('click', () => {
+      //Animate Links
+      navLinks.classList.toggle("open");
+      links.forEach(link => {
+        link.classList.toggle("fade");
+      });
+
+      //Hamburger Animation
+      hamburger.classList.toggle("toggle");
+    });
+  </script>
 
 </body>
 

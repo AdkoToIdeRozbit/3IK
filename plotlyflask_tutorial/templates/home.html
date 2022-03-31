@@ -46,15 +46,7 @@
       style="width: 50vw; transform: translateY(-10%);" loop autoplay></lottie-player>
 
   </div>
-
-
 </div>
-
-
-
-
-
-
 
 
 <div class="ml11" style="padding-top: 5%;font-size: 5vw;font-weight: 800;display: flex;justify-content: space-around;">
@@ -649,7 +641,6 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 <script src="//cdnjs.cloudflare.com/ajax/libs/SVG-Morpheus/0.1.8/svg-morpheus.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
 
@@ -700,7 +691,9 @@
           duration: 2000,   // 10<x>0 is typewriter effect higher is fader
           offset: '-=775',
           delay: (el, i) => 34 * (i + 1),
-
+          complete: function () {
+            $('.letters').html("Design your own robotic arms")
+          }
         })
       tl2
         .add({
@@ -748,6 +741,9 @@
           begin: function (anim) {
             document.querySelector('.add_text1').style.opacity = 1
           },
+          complete: function () {
+            $('.add_text1').html("Create your kinematic chain")
+          }
         })
       tl5
         .add({
@@ -761,6 +757,9 @@
           begin: function (anim) {
             document.querySelector('.add_text2').style.opacity = 1
           },
+          complete: function () {
+            $('.add_text2').html("in the scene of Designer")
+          }
         })
       tl6
         .add({
@@ -774,6 +773,9 @@
           begin: function (anim) {
             document.querySelector('.add_text3').style.opacity = 1
           },
+          complete: function () {
+            $('.add_text3').html("by clicking on the cylinders.")
+          }
         })
       tl7
         .add({
@@ -787,6 +789,9 @@
           begin: function (anim) {
             document.querySelector('.DH_text').style.opacity = 1
           },
+          complete: function () {
+            $('.DH_text').html("DH parameters are calculated automatically.")
+          }
         })
 
     }
@@ -875,7 +880,12 @@
       delay: (el, i) => 150 + 25 * i,
       begin: function () {
         document.querySelector('.ml14 .lettersz').style.opacity = 1
+      },
+      complete: function () {
+        //$('.ml14 .lettersz').empty()
+        $('.ml14 .lettersz').html('Easy solution to any IK problem');
       }
+
     })
   t2
     .add({
@@ -888,6 +898,9 @@
       delay: (el, i) => 1850 + 30 * i,
       begin: function () {
         document.querySelector('.merc').style.opacity = 1
+      },
+      complete: function () {
+        $('.merc').html('Kinematic diagram is all you need');
       }
     })
   t3
@@ -901,6 +914,9 @@
       delay: (el, i) => 1850 + 30 * i,
       begin: function () {
         document.querySelector('.merc2').style.opacity = 1
+      },
+      complete: function () {
+        $('.merc2').html('for figuring out your specific IK solution.');
       }
     })
   t4
@@ -926,6 +942,9 @@
       delay: (el, i) => 5000 + 20 * i,
       begin: function () {
         document.querySelector('.vvv1').style.opacity = 1
+      },
+      complete: function () {
+        $('.vvv1').html("Control the trajectory of your robotic arm,")
       }
     })
     .add({
@@ -938,6 +957,9 @@
       delay: (el, i) => 20 * i,
       begin: function () {
         document.querySelector('.vvv2').style.opacity = 1
+      },
+      complete: function () {
+        $('.vvv2').html("acquire angles needed for this trajectory")
       }
     })
     .add({
@@ -950,6 +972,9 @@
       delay: (el, i) => 20 * i,
       begin: function () {
         document.querySelector('.vvv3').style.opacity = 1
+      },
+      complete: function () {
+        $('.vvv3').html("and use the solution for your needs.")
       }
     })
 

@@ -14,7 +14,6 @@
 <br>
 <hr>
 
-
 <ul class="list-group list-group-flush" id="notes">
   {% for note in user.notes %}
   <li class="list-group-item{{ note.id }}" onload="myFunction()">
@@ -37,7 +36,7 @@
   {% endfor %}
 </ul>
 
-<br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/delete_id.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/load_robots.js') }}"></script>
