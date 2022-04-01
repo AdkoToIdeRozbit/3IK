@@ -3,27 +3,27 @@
   padding: 0;
 }
 
-.robotFlex{
+.robotFlex {
   display: flex;
 }
 
 
-.list-group-item{
+.list-group-item {
   display: flex;
 }
 
-.save-diagram{
+.save-diagram {
   display: flex;
   flex-direction: row;
 }
 
-.dash-graph{
+.dash-graph {
   position: absolute;
   width: 15%;
   left: 8%;
 }
 
-.ID_text{
+.ID_text {
   position: absolute;
   top: 125%;
   left: 8%;
@@ -33,34 +33,35 @@
   font-size: large;
   font-style: italic;
 }
-.save-diagram{
+
+.save-diagram {
   display: flex;
   justify-content: center;
   position: absolute;
   top: 130%;
 }
 
-.ALERT{
+.ALERT {
   position: absolute;
   bottom: 0px;
   right: 0px;
 }
 
-.akt-pos{
+.akt-pos {
   display: flex;
   flex-direction: column;
   position: absolute;
   left: 60%;
 }
 
-.nov-pos{
+.nov-pos {
   display: flex;
   flex-direction: column;
   position: absolute;
   left: 70%;
 }
 
-.novaPoziciaButton{
+.novaPoziciaButton {
   width: 20%;
 }
 
@@ -83,14 +84,15 @@ header {
   position: absolute;
 }
 
-.dropdown-content a:hover{
+.dropdown-content a:hover {
   color: #0088a9;
 }
 
 .dropdown:hover .dropdown-content {
   display: grid;
   flex-direction: column;
-  background-color: #24252a; /*#4b4c4d*/
+  background-color: #24252a;
+  /*#4b4c4d*/
 }
 
 .dropdown-content a {
@@ -102,7 +104,7 @@ header {
 }
 
 
-.flex{
+.flex {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -114,18 +116,18 @@ header {
   left: 76%;
 }
 
-.edit_robot_flex{
+.edit_robot_flex {
   display: flex;
 }
 
-.edit_buttons{
+.edit_buttons {
   display: flex;
   position: fixed;
   top: 87.5%;
   left: 25%;
 }
 
-.account_buttons{
+.account_buttons {
   display: flex;
   flex-direction: column;
   padding-top: 10px;
@@ -133,10 +135,10 @@ header {
 
 
 .edit_robot {
-  width:50% !important;
-  height:75% !important;
+  width: 50% !important;
+  height: 75% !important;
   position: fixed;
-  border:5px solid;
+  border: 5px solid;
   top: 50%;
   left: 50%;
   /* bring your own prefixes */
@@ -152,37 +154,40 @@ header {
   color: rgb(255, 1, 1);
 }*/
 
-.flex_table{
+.flex_table {
   display: flex;
   padding: 0px 30px;
 }
 
-.go{
+.go {
   position: absolute;
   justify-content: center;
   top: 36%;
   left: 8%;
-  border:2px solid;
+  border: 2px solid;
 }
 
-.userrobot{  /*go2*/
-  border:2px solid;
+.userrobot {
+  /*go2*/
+  border: 2px solid;
 }
 
-.ad{
+.ad {
   width: 28px;
 }
 
 .nav__links a,
 .cta,
-.overlay__content a, .dropdown {
+.overlay__content a,
+.dropdown {
   font-family: "Montserrat", sans-serif;
   font-weight: 540;
   font-size: large;
   color: #edf0f1;
   text-decoration: none;
 }
-.note_data_text{
+
+.note_data_text {
   text-align: center;
   vertical-align: middle;
   width: 450px;
@@ -190,30 +195,31 @@ header {
 }
 
 
-.group-items{
+.group-items {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 
-#kanvas{
+#kanvas {
   position: absolute;
   pointer-events: none;
   top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: -1;
 }
 
-.divRobot{
+.divRobot {
   width: 500px;
   height: 300px;
 }
 
 
-.nav__links, .dropdown {
+.nav__links,
+.dropdown {
   list-style: none;
   display: flex;
   align-items: center;
@@ -287,6 +293,7 @@ header {
 .overlay a:focus {
   color: #0088a9;
 }
+
 .overlay .close {
   position: absolute;
   top: 20px;
@@ -294,95 +301,3 @@ header {
   font-size: 60px;
   color: #edf0f1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.list-inline{
-  display: flex;
-
-}
-
-.footer-basic {
-  position: absolute;
-  top: 150%;
-  left: 0;
-  display: flex;
-  
-  justify-content: center;
-  width: 100%;
-  padding:25px 0;
-  background-color:#4b4c4d;
-  color:#ffffff;
-}
-
-.footer-basic ul {
-  padding:0;
-  list-style:none;
-  text-align:center;
-  font-size:18px;
-  line-height:1.6;
-  margin-bottom:0;
-}
-
-.footer-basic li {
-  padding:0 10px;
-}
-
-.footer-basic ul a {
-  color:inherit;
-  text-decoration:none;
-  opacity:0.8;
-}
-
-.footer-basic ul a:hover {
-  opacity:1;
-}
-
-.footer-basic .social {
-  text-align:center;
-  padding-bottom:25px;
-}
-
-.footer-basic .social > a {
-  font-size:24px;
-  width:40px;
-  height:40px;
-  line-height:40px;
-  display:inline-block;
-  text-align:center;
-  border-radius:50%;
-  border:1px solid #ccc;
-  margin:0 8px;
-  color:inherit;
-  opacity:0.75;
-}
-
-.footer-basic .social > a:hover {
-  opacity:0.9;
-}
-
-.footer-basic .copyright {
-  margin-top:15px;
-  text-align:center;
-  font-size:13px;
-  color:#aaa;
-  margin-bottom:0;
-}
-
-/* Credit to https://epicbootstrap.com/snippets/footer-basic */
-
-
