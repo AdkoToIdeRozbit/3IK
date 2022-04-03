@@ -27,3 +27,8 @@ def first():
 @app.route("/ik")
 def firstgg():
     return render_template("js.html", user=current_user)
+
+
+@app.route("/three")
+def three():
+    return render_template("three.html", user=current_user)

@@ -1,0 +1,8 @@
+{% extends "base.html" %} {% block title %}Three {% endblock %} {% block content%}
+
+<canvas id="gs"></canvas>
+
+
+<script type="module" src="{{ url_for('static', filename='js/tri.js') }}"></script>
+
+{% endblock %}

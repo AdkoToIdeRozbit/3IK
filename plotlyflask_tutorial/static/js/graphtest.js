@@ -1,3 +1,5 @@
+import { Vector3 } from "https://threejs.org/build/three.module.js"
+
 var X = [0]
 var Y = [0]
 var Z = [0]
@@ -30,6 +32,14 @@ var output_type
 var FOR_USER_ANGLES = []
 var FOR_USER_ANGLES2 = []
 var MAX_ANGLES = []
+const x = new Vector3(1, 0, 0);
+const y = new Vector3(0, 0, 1);
+const z = new Vector3(0, 1, 0);
+
+var c = []
+for (i = 0; i < 10; i++) {
+  c.push(i)
+}
 
 var layout = {
   uirevision: 'true',
@@ -91,8 +101,8 @@ var trace1 = {
   mode: 'lines',
   line: {
     width: 7,
-    color: "blue",
-    reversescale: false
+    color: c,
+    colorscale: "Viridis"
   },
   type: 'scatter3d'
 };
@@ -103,7 +113,7 @@ var trace2 = {
   type: 'scatter3d',
   marker: {
     color: 'red',
-    size: 5,
+    size: 1,
     symbol: 'circle',
     line: {
       color: 'rgb(0,0,0)',
@@ -133,33 +143,199 @@ var trace3 = {
   },
 };
 
-var data = [trace1, trace2, trace3]
+var trace4 = {
+  name: "X",
+  x: 0,
+  y: 0,
+  z: 0,
+  mode: 'lines',
+  line: {
+    width: 7,
+    color: "red",
+  },
+  type: 'scatter3d'
+};
+
+var trace5 = {
+  name: "Y",
+  x: 0,
+  y: 0,
+  z: 0,
+  mode: 'lines',
+  line: {
+    width: 7,
+    color: "green",
+  },
+  type: 'scatter3d'
+};
+
+var trace6 = {
+  name: "Z",
+  x: 0,
+  y: 0,
+  z: 0,
+  mode: 'lines',
+  line: {
+    width: 7,
+    color: "blue",
+  },
+  type: 'scatter3d'
+};
+
+
+
+var data = [trace1, trace2, trace3, trace4, trace5, trace6]
 var config = { responsive: true }
+
 Plotly.newPlot('myDiv', data, layout, config);
-
-
 
 window.onload = function () {
 
-  DH = JSON.parse(localStorage.getItem("DH"))
-  //DH = [[0, -90, 3, 9], [-90, 0, 9, 0], [0, -90, 3, 0], [0, 90, 0, 9], [90, 90, 0, 0], [0, 0, 0, 4]]
+  //DH = JSON.parse(localStorage.getItem("DH"))
+  DH = [[0, -90, 0, 29], [-90, 0, 27, 0], [0, -90, 7, 0], [0, 90, 0, 30], [0, -90, 0, 0], [0, 0, 0, 7]]
+
+  layout.scene = {
+    aspectmode: "manual",
+    aspectratio: {
+      x: 1, y: 1, z: 1,
+    },
+    xaxis: {
+      title: "X(cm)",
+      range: [-50, 50],
+      showgrid: true,
+      zeroline: false,
+      showline: true,
+      gridcolor: '#A1A1A1',
+      gridwidth: 2,
+      color: '#000000',
+    },
+    yaxis: {
+      title: "Y(cm)",
+      range: [-50, 50],
+      showgrid: true,
+      zeroline: false,
+      showline: true,
+      gridcolor: '#A1A1A1',
+      gridwidth: 2,
+      zerolinewidth: 4,
+      color: '#000000',
+    },
+    zaxis: {
+      title: "Z(cm)",
+      range: [0, 100],
+      showgrid: true,
+      zeroline: false,
+      showline: true,
+      gridcolor: '#A1A1A1',
+      gridwidth: 2,
+      zerolinewidth: 4,
+      color: '#000000',
+    },
+  }
+
+  Plotly.relayout('myDiv', layout, 1)
+
   for (let i = 0; i < DH.length; i++) {
     THETAS.push(DH[i][0] * 0.0174532925)
     ALFAS.push(DH[i][1] * 0.0174532925)
     Rs.push(DH[i][2])
     Ds.push(DH[i][3])
+    FOR_USER_ANGLES2.push([])
   }
 
   for (let i = 1; i < DH[0].length; i++) {
     UHLY.push(0)
     MAX_ANGLES.push(Infinity)
-    FOR_USER_ANGLES2.push([])
   }
 
   calculate_matricies()
-  update_robot()
   make_layout()
-};
+  update_robot()
+
+
+
+  Plotly.restyle('myDiv', {
+    x: [[20, 20 + x.x * 10]],
+    y: [[20, 20 + x.y * 10]],
+    z: [[20, 20 + x.z * 10]],
+  }, 3)
+
+  Plotly.restyle('myDiv', {
+    x: [[20, 20 + y.x * 10]],
+    y: [[20, 20 + y.y * 10]],
+    z: [[20, 20 + y.z * 10]],
+  }, 4)
+
+  Plotly.restyle('myDiv', {
+    x: [[20, 20 + z.x * 10]],
+    y: [[20, 20 + z.y * 10]],
+    z: [[20, 20 + z.z * 10]],
+  }, 5)
+
+  $(".ryp").append(`<div style="padding-top:50px;"><input type="range" min="0" max="45" value="0" class="slider form-range" id="ryp1"></div>`)
+  $(".ryp").append(`<div style="padding-top:50px;"><input type="range" min="0" max="45" value="0" class="slider form-range" id="ryp2"></div>`)
+  $(".ryp").append(`<div style="padding-top:50px;"><input type="range" min="0" max="45" value="0" class="slider form-range" id="ryp3"></div>`)
+
+  document.getElementById(`ryp1`).oninput = function () {
+    var a = parseInt(document.getElementById(`ryp1`).value) * 0.0174532925
+
+    y.applyAxisAngle(x, a)
+    z.applyAxisAngle(x, a)
+
+    Plotly.restyle('myDiv', {
+      x: [[20, 20 + y.x * 10]],
+      y: [[20, 20 + y.y * 10]],
+      z: [[20, 20 + y.z * 10]],
+    }, 4)
+
+    Plotly.restyle('myDiv', {
+      x: [[20, 20 + z.x * 10]],
+      y: [[20, 20 + z.y * 10]],
+      z: [[20, 20 + z.z * 10]],
+    }, 5)
+
+  }
+  document.getElementById(`ryp2`).oninput = function () {
+    var a = parseInt(document.getElementById(`ryp2`).value) * 0.0174532925
+
+    x.applyAxisAngle(y, a)
+    z.applyAxisAngle(y, a)
+
+    Plotly.restyle('myDiv', {
+      x: [[20, 20 + x.x * 10]],
+      y: [[20, 20 + x.y * 10]],
+      z: [[20, 20 + x.z * 10]],
+    }, 3)
+
+    Plotly.restyle('myDiv', {
+      x: [[20, 20 + z.x * 10]],
+      y: [[20, 20 + z.y * 10]],
+      z: [[20, 20 + z.z * 10]],
+    }, 5)
+  }
+  document.getElementById(`ryp3`).oninput = function () {
+    var a = parseInt(document.getElementById(`ryp3`).value) * 0.0174532925
+
+    x.applyAxisAngle(z, a)
+    y.applyAxisAngle(z, a)
+
+    console.log(xpos, ypos, zpos)
+
+    Plotly.restyle('myDiv', {
+      x: [[xpos, xpos + x.x * 10]],
+      y: [[ypos, ypos + x.y * 10]],
+      z: [[zpos, zpos + x.z * 10]],
+    }, 3)
+
+    Plotly.restyle('myDiv', {
+      x: [[xpos, xpos + y.x * 10]],
+      y: [[ypos, ypos + y.y * 10]],
+      z: [[zpos, zpos + y.z * 10]],
+    }, 4)
+  }
+}
+
+
 
 function calculate_matricies() {
   hom_from_0 = []
@@ -207,6 +383,20 @@ function calculate_matricies() {
   document.querySelector(".akt-x").innerHTML = `X: ${Math.round(X[X.length - 1] * 100) / 100}cm`
   document.querySelector(".akt-y").innerHTML = `Y: ${Math.round(Y[X.length - 1] * 100) / 100}cm`
   document.querySelector(".akt-z").innerHTML = `Z: ${Math.round(Z[X.length - 1] * 100) / 100}cm`
+
+  var a = hom_from_0[2]
+  var R0_3 = [[a[0][0], a[0][1], a[0][2]],
+  [a[1][0], a[1][1], a[1][2]],
+  [a[2][0], a[2][1], a[2][2]]]
+
+  var R0_3inv = math.inv(R0_3)
+
+  var R0_6 = [[-1, 0, 0],
+  [0, -1, 0],
+  [0, 0, 1]]
+
+  var R3_6 = math.multiply(R0_3inv, R0_6)
+
 }
 
 function make_layout() {
@@ -324,6 +514,11 @@ function get_slow_down_jacobian(slow_down, plot) {
       update_trajectory()
       return
     }
+    if (i == 999) {
+      update_robot()
+      update_trajectory()
+      return
+    }
   }
 }
 
@@ -355,11 +550,7 @@ function get_constant_jacobian() {
     var JtJJtinv = math.multiply(Jt, ainv)*/
     //console.log(JJt)
     var JJtinv = math.inv(JJt)
-
     var JtJJtinv = math.multiply(Jt, JJtinv)
-
-
-
 
     var docasne = []
     for (let i = 0; i < UHLY.length; i++) {
@@ -392,6 +583,11 @@ function get_constant_jacobian() {
       update_trajectory()
       return
     }
+    if (i == 999) {
+      update_robot()
+      update_trajectory()
+      return
+    }
   }
 }
 
@@ -414,8 +610,6 @@ document.querySelector('.new-x').addEventListener('change', (event) => {
 });
 document.querySelector('.new-y').addEventListener('change', (event) => {
   ypos = event.target.value
-  console.log(xpos, ypos, zpos)
-
   update_point()
 
 });
