@@ -1,0 +1,118 @@
+.kontainer {
+  position: relative;
+  height: 10%;
+  padding: 0;
+  margin: 5%;
+}
+
+
+.edit_robot_flex {
+  display: flex;
+}
+
+.edit_buttons {
+  display: flex;
+  position: fixed;
+  top: 89%;
+  gap: 10px;
+  left: 24.6%;
+}
+
+#closee {
+  position: fixed;
+  top: 12%;
+  right: 23%;
+}
+
+.account_buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ad {
+  width: 28px;
+}
+
+
+.edit_robot {
+  position: fixed;
+  outline: 5px solid;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.note_data_text {
+  width: 40%;
+  font-size: large;
+  word-wrap: break-word;
+}
+
+.group-items {
+  display: flex;
+  justify-content: space-between !important;
+  align-items: center;
+}
+
+hr {
+  border: 0;
+  clear: both;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #000000;
+  opacity: 0.2;
+}
+
+.ad {
+  width: 32px;
+  height: 20px;
+  size: 5px;
+}
+
+.ad::-webkit-input-placeholder,
+.ad::-webkit-input {
+  font-size: 10px;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  position: relative;
+  min-height: 100%;
+}
+
+#kanvas {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  min-height: 100% !important;
+  z-index: -1;
+  background-image: url("../photos/bcgrnddd.png");
+  font-family: 'Vibur', cursive;
+  font-family: 'Abel', sans-serif;
+  opacity: .95;
+}
+
+.divRobot {
+  width: 500px;
+  height: 300px;
+  background-image: none !important;
+}
+
+
+
+.footer-basic {
+  display: flex;
+  margin-top: 50vh;
+  justify-content: center;
+  width: 100%;
+  padding: 15px 0;
+  background-color: #24252a;
+  color: #ffffff;
+}

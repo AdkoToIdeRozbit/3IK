@@ -1,0 +1,128 @@
+{% extends "base.html" %} {% block title %}JS {% endblock %} {% block content%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/js.css') }}">
+<div class="alertDiv" style="margin: 0 auto;height: 50px;"></div>
+
+
+
+<div class="whole_app">
+  <div style="width:75%;" class="ryp">
+    <div style="font-size: 50px;">Trajectory planner</div>
+    <div id="myDiv"></div>
+    <button class="clear btn btn-outline-primary">Clear Trajectory</button>
+    <!-- <div style="padding-top:50px;"><input type="range" min="0" max="360" value="0" class="slider form-range v1"
+        id="ryp">
+    </div>
+    <div style="padding-top:50px;"><input type="range" min="0" max="360" value="0" class="slider form-range v2"
+        id="ryp">
+    </div>
+    <div style="padding-top:50px;"><input type="range" min="0" max="360" value="0" class="slider form-range v3"
+        id="ryp">
+    </div> -->
+  </div>
+
+  <div class="after">
+    <div class="b">
+      <div class="a" style="padding-bottom: 6%;font-size: 50px !important;">Control panel: </div>
+      <div class="c">
+        <div class="d" style="display: flex;flex-direction: column; align-items: center;gap: 4%;">
+          <div style="width: 150%; padding-left: 25%;font-weight: 600; font-size: large;">Current position</div>
+          <div style="font-size: large;" class="akt-x"></div>
+          <div style="font-size: large;" class="akt-y"></div>
+          <div style="font-size: large;" class="akt-z"></div>
+        </div>
+
+        <div style="display: flex;flex-direction: column;align-items: center;">
+          <div style="font-weight: 600;font-size: large;">New position</div>
+          <input type="number" placeholder="X" class="new-x input_pos">
+          <input type="number" placeholder="Y" class="new-y input_pos">
+          <input type="number" placeholder="Z" class="new-z input_pos">
+        </div>
+      </div>
+      <button class="compute btn btn-outline-primary" style="transform: translateY(-30%);"
+        title="Start calculations">Compute IK</button>
+    </div>
+    <div style="text-align: center;font-size: larger;">Set starting joint angles with sliders and limitations of your
+      robot with
+      maximum
+      angles each joint can rotate
+      about.</div>
+    <div class="sliders"></div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; width: 80%;gap: 4%;padding-top: 3%;">
+
+    <form name="mode" style="text-align: center;">
+      <div style="transform: translateY(-50%); text-align: center; font-weight: 600;font-size: large;">Speed mode of the
+        end-effector
+      </div>
+      <div>
+        <input type="radio" id="html" name="spdmode" value="1" checked>
+        <label style="font-size: large;" for="html">Constant</label><br>
+      </div>
+      <div>
+        <input type="radio" id="css" name="spdmode" value="2">
+        <label style="font-size: large;" for="css">Slow-down</label><br>
+      </div>
+      <div>
+        <input type="radio" id="javascript" name="spdmode" value="3">
+        <label style="font-size: large;" for="javascript">Speed-up</label>
+      </div>
+    </form>
+
+    <div class="precision" style="display: flex;flex-direction: column;align-items: center;gap: 1vw;">
+      <div style="font-size: large;font-weight: 500;">Set number of calculations </div>
+      <input style="width: 60%;" type="range" min="0" max="2" value="1" class="precision-value">
+      <div style="text-align: center; width: 70%;font-size: large;" class="slider-text-output">
+        <span style="color: darkorange;">Medium</span> precision is on average 14 calculations per
+        centimeter of trajectory.
+      </div>
+    </div>
+
+    <form>
+
+      <div style="text-align: center;">
+        <input type="checkbox" id="negative_angle" name="vehicle1">
+        <label style="font-weight: 500;font-size: large;" for="vehicle1"> Negative angle exception</label><br>
+      </div>
+      <div style="text-align: center;" class="negative-angle-text">Ignore computations of negative angles</div>
+
+    </form>
+
+    <div style="text-align: center;display: flex;flex-direction: column; align-items: center;gap: 1vw;">
+      <button class="get_angles btn btn-outline-success">Get angles</button>
+      <div class="type-output">After pressing
+        this button,
+        you will recieve
+        angles of
+        your joints
+        for
+        current trajectory
+        as Array for each joint.</div>
+
+      <form name="type">
+        <input class="ml" type="radio" name="data" value="1" checked>
+        <label style="font-weight: 500;" for="html">Array for each joint</label><br>
+        <input type="radio" name="data" value="2">
+        <label style="font-weight: 500;" for="css">Array of arrays</label><br>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<datalist id="steplist">
+  <option value="0" label="0°"></option>
+  <option value="90" label="90°"></option>
+  <option value="180" label="180°"></option>
+  <option value="270" label="270°"></option>
+  <option value="360" label="360°"></option>
+</datalist>
+
+
+<script src='https://cdn.plot.ly/plotly-2.9.0.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.4.1/math.js"
+  integrity="sha512-chaoc0M8+8wskyWU/lt5wgBbX8Rx0349Ke8srsfzQc0+DsPhww0RTcuMiphUNF4AQ+L3C07JJKq3CQeTLssJRQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+<script type="module" src="{{ url_for('static', filename='js/graphtest.js') }}"></script>
+{% endblock %}
