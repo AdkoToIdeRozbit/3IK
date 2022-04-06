@@ -191,8 +191,8 @@ Plotly.newPlot('myDiv', data, layout, config);
 
 window.onload = function () {
 
-  //DH = JSON.parse(localStorage.getItem("DH"))
-  DH = [[0, -90, 0, 29], [-90, 0, 27, 0], [0, -90, 7, 0], [0, 90, 0, 30], [0, -90, 0, 0], [0, 0, 0, 7]]
+  DH = JSON.parse(localStorage.getItem("DH"))
+  //DH = [[0, -90, 0, 29], [-90, 0, 27, 0], [0, -90, 7, 0], [0, 90, 0, 30], [0, -90, 0, 0], [0, 0, 0, 7]]
 
   layout.scene = {
     aspectmode: "manual",

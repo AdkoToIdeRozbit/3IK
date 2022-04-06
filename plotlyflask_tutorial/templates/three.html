@@ -1,7 +1,18 @@
 {% extends "base.html" %} {% block title %}Three {% endblock %} {% block content%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/three.css') }}">
 
-<canvas id="gs"></canvas>
 
+<div id="gui"></div>
+<div style="position: relative;display: inline-block;">
+  <canvas id="bg" class="go">
+  </canvas>
+  <div class="alertDiv" style="z-index: 10;position: absolute;top: 0;right:0;padding: 0.6%;"></div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.4.1/math.js"
+  integrity="sha512-chaoc0M8+8wskyWU/lt5wgBbX8Rx0349Ke8srsfzQc0+DsPhww0RTcuMiphUNF4AQ+L3C07JJKq3CQeTLssJRQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script type="module" src="{{ url_for('static', filename='js/tri.js') }}"></script>
 

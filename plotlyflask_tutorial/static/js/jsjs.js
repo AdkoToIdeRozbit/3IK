@@ -17,6 +17,11 @@ button[0].addEventListener("click", Code, false);
 
 function Code() {
   window.localStorage.setItem('DH', JSON.stringify(DH));
+  var a = ''
+  JOINTS.forEach(e => {
+    a = a + e.userData.type + " "
+  });
+  window.localStorage.setItem('JOINTS', a);
 }
 
 var button = document.getElementById("save_diagram");
@@ -407,6 +412,7 @@ function createCylinder1(x, y, z, u, rotx, roty, rotz) {
     cylinder.receiveShadow = true
     cylinder.userData.draggable = true
     cylinder.userData.one = true
+    cylinder.userData.type = 1
 
     if (typeof JOINTS[i - 2] != "undefined") {
       let x1 = JOINTS[i - 2].position.x
@@ -464,6 +470,7 @@ function createCylinder2(x, y, z, u, rotx, roty, rotz) {
     cylinder.userData.draggable = true
     cylinder.userData.two = true
     cylinder.rotation.x = 3.14 / 2
+    cylinder.userData.type = 2
 
     if (typeof JOINTS[i - 2] != "undefined") {
       let x1 = JOINTS[i - 2].position.x
@@ -519,6 +526,7 @@ function createCylinder3(x, y, z, u, rotx, roty, rotz) {
     cylinder.userData.draggable = true
     cylinder.userData.three = true
     cylinder.rotation.z = 3.14 / 2
+    cylinder.userData.type = 3
 
     if (typeof JOINTS[i - 2] != "undefined") {
       let x1 = JOINTS[i - 2].position.x
@@ -569,6 +577,8 @@ function createSphere(x, y, z, u, rotx, roty, rotz) {
     let sphere = new THREE.Mesh(geometry, material);
     sphere.receiveShadow = true
     sphere.castShadow = true
+    sphere.userData.type = 4
+
 
     if (typeof JOINTS[i - 2] != "undefined") {
       let x1 = JOINTS[i - 2].position.x
@@ -712,8 +722,8 @@ function add_event_listener(element, object) {
         create_id()
       }
       else {
-        connect_joints('', '', index)  //destroy 
-        connect_joints('', '', index - 1)  //destroy 
+        connect_joints('', '', index)  //destroy
+        connect_joints('', '', index - 1)  //destroy
       }
     }
 
@@ -811,7 +821,7 @@ function create_text(x, y, z, i) {
 }
 
 function add_event_listener_rotate(element, object) {
-  element.addEventListener('dragging-changed', function (event) {  // frames rotated  
+  element.addEventListener('dragging-changed', function (event) {  // frames rotated
     orbit.enabled = !event.value;
 
     if (event.value == false) {
