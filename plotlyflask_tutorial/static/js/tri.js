@@ -29,7 +29,7 @@ var COS = []
 var DH
 var ROTATIONS = []
 var TRAJECTORY = []
-var speed_mode = 1
+var speed_mode = "constant"
 var UHLY_zaciatok = []
 var POS_X_zaciatok
 var POS_Y_zaciatok
@@ -41,9 +41,6 @@ var output_type
 var FOR_USER_ANGLES = []
 var FOR_USER_ANGLES2 = []
 var MAX_ANGLES = []
-const x = new THREE.Vector3(1, 0, 0);
-const y = new THREE.Vector3(0, 0, 1);
-const z = new THREE.Vector3(0, 1, 0);
 var LINES = []
 var active_counter = 0
 var Types = []
@@ -54,7 +51,15 @@ var target
 var envelope, obalka
 var record = true
 var showtraj = true
+var rozdiel
 var pos = new THREE.Vector3()
+
+var adset = {
+  negative: false,
+  speed: "Constant",
+  precision: "Medium",
+}
+
 const gui = new GUI({ width: 300, autoPlace: false })
 
 $("#gui").append($(gui.domElement));
@@ -68,10 +73,10 @@ function init() {
   var Height = window.innerHeight * 0.8;
   var mq = window.matchMedia("(max-width: 1000px)");
   if (mq.matches) {
-    Width = window.innerWidth * 0.85;
+    Width = window.innerWidth * 0.991;
   }
   else {
-    Width = window.innerWidth * 0.65;
+    Width = window.innerWidth * 0.991;
     renderer.setSize(Width, Height);
   }
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -128,13 +133,42 @@ function init() {
   make_target()
   make_envelope()
   make_trajectory()
+  make_more_settings()
+}
+
+function make_more_settings() {
+  const abbc = gui.addFolder('MORE SETTINGS')
+  abbc.add(adset, 'negative').name("Catch negative angles")
+  abbc.add(adset, "speed", ["Constant", "Slow-down", "Speed-up"]).name("End effector speed mode").onChange(function () {
+    if (adset.speed == "Constant") speed_mode = "constant"
+    else if (adset.speed == "Slow-down") speed_mode = "slow"
+    else speed_mode = "speed"
+  })
+  abbc.add(adset, "precision", ["Medium", "Low", "High"]).name("Calculations count").onChange(function () {
+    if (adset.precision == "Medium") precision = 25
+    else if (adset.precision == "Low") precision = 15
+    else precision = 30
+  })
+
+  var a
+  for (let i = 0; i < JOINTS.length - 1; i++) {
+    a = {
+      max: Infinity,
+    }
+    MAX_ANGLES[i] = a
+    abbc.add(a, 'max', 0, 360, 1).onChange(function () {
+      console.log(MAX_ANGLES)
+    })
+      .name(`Max angle of ${i + 1}. joint`)
+  }
+
 }
 
 function make_trajectory() {
   const abba = gui.addFolder('TRAJECTORY')
   var settings = {
     checkbox: true,
-    record: true,
+    record: false,
     show: true
   }
 
@@ -176,9 +210,9 @@ function get_constant_jacobian() {
     var xpos = target.position.x
     var ypos = target.position.y
     var zpos = target.position.z
-    var xBodka = (xpos - pos.x) / 30
-    var yBodka = (ypos - pos.y) / 30
-    var zBodka = (zpos - pos.z) / 30
+    var xBodka = (xpos - pos.x) / precision
+    var yBodka = (ypos - pos.y) / precision
+    var zBodka = (zpos - pos.z) / precision
 
     for (let i = 0; i < 1000; i++) {
       calculate_matricies()
@@ -207,21 +241,21 @@ function get_constant_jacobian() {
         //FOR_USER_ANGLES2[i].push(Math.round(uhol * 100) / 100)
         UHLY.splice(i, 1)
         UHLY.splice(i, 0, uhol)
-        /*if (negative_angle_exception && uhol < 0) {
-          alerts("Negative angle has been calculated, if you wish to continue with this trajectory, disable negative angle exception.")
-          update_robot
+        if (adset.negative && uhol < 0) {
+          alerts(`Negative angle has been calculated, if you wish to continue with this trajectory, disable "Catch negative angles".`)
+          update_robot()
           return
         }
-        if (uhol > MAX_ANGLES[i]) {
+        if (uhol > MAX_ANGLES[i].max) {
           alerts("Maximum angle of some of your joint has been preceeded. Choose different trajectory.")
-          update_robot
+          update_robot()
           return
         }
-        docasne.push(Math.round(uhol * 100) / 100)*/
+        //docasne.push(Math.round(uhol * 100) / 100)
       }
       //FOR_USER_ANGLES.push(docasne)
       //console.log(UHLY)
-      var rozdiel = Math.sqrt((xpos - X[X.length - 1]) ** 2 + (ypos - Y[X.length - 1]) ** 2 + (zpos - Z[X.length - 1]) ** 2)
+      rozdiel = Math.sqrt((xpos - X[X.length - 1]) ** 2 + (ypos - Y[X.length - 1]) ** 2 + (zpos - Z[X.length - 1]) ** 2)
       if (record) {
         const geometry = new THREE.SphereGeometry(0.1, 32, 16);
         const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
@@ -232,47 +266,118 @@ function get_constant_jacobian() {
         TRAJECTORY.push(dad)
       }
 
-
-      /*let geometry = new THREE.SphereGeometry(0.4, 32, 16);
-      let material = new THREE.PointsMaterial({ color: 0x888888 });
-      let point = new THREE.Points(geometry, material);
-      point.position.set(X[X.length - 1], Y[X.length - 1], Z[X.length - 1])
-      scene.add(point)*/
-
-
       if (rozdiel < 0.5) {
-        for (let v = 0; v < UHLY.length; v++) {
-          JOINTS[v].rotateY(UHLY[v] * 0.0174532925 - ROTATIONS[v].prev)
-          ROTATIONS[v].prev = UHLY[v] * 0.0174532925
-          ROTATIONS[v].rotation = UHLY[v]
-        }
-        for (var ci = 0; ci < Object.keys(gui.__folders).length; ci++) {
-          var key = Object.keys(gui.__folders)[ci];
-          for (var jc = 0; jc < gui.__folders[key].__controllers.length; jc++) {
-            gui.__folders[key].__controllers[jc].updateDisplay();
-          }
-        }
+        update_robot()
         return
       }
       if (i == 999) {
-        for (let v = 0; v < UHLY.length; v++) {
-          JOINTS[v].rotateY(UHLY[v] * 0.0174532925 - ROTATIONS[v].prev)
-          ROTATIONS[v].prev = UHLY[v] * 0.0174532925
-          ROTATIONS[v].rotation = UHLY[v]
-        }
-        for (var ci = 0; ci < Object.keys(gui.__folders).length; ci++) {
-          var key = Object.keys(gui.__folders)[ci];
-          for (var jc = 0; jc < gui.__folders[key].__controllers.length; jc++) {
-            gui.__folders[key].__controllers[jc].updateDisplay();
-          }
-        }
+        update_robot()
         return
       }
 
     }
   }
-  else alerts("Your point is outside of reach for your robot.")
+  else alerts("This point is outside of reach for your robot.")
 }
+
+
+function get_slow_down_jacobian(slow_down, plot) {
+  if (slow_down) {
+    SPEED_UP_VECTORS = []
+    UHLY_zaciatok = []
+    POS_X_zaciatok = []
+    POS_Y_zaciatok = []
+    POS_Z_zaciatok = []
+    UHLY_zaciatok.push(...UHLY)
+    POS_X_zaciatok = X[X.length - 1]
+    POS_Y_zaciatok = Y[X.length - 1]
+    POS_Z_zaciatok = Z[X.length - 1]
+    var x = target.position.x
+    var y = target.position.y
+    var z = target.position.z
+  }
+  else {
+    var x = POS_X_zaciatok
+    var y = POS_Y_zaciatok
+    var z = POS_Z_zaciatok
+  }
+
+  for (let k = 0; k < 1000; k++) {
+    calculate_matricies()
+    var jed_matica = [[0], [0], [1]]
+    var prvy_element = math.cross(jed_matica, dis_from_0[dis_from_0.length - 1])
+    var JACOBIAN = [[prvy_element[0][0], prvy_element[0][1], prvy_element[0][2]]]
+
+    for (let i = 0; i < hom_from_0.length - 1; i++) {
+      var rotx = hom_from_0[i][0][2]
+      var roty = hom_from_0[i][1][2]
+      var rotz = hom_from_0[i][2][2]
+      var rot = [rotx, roty, rotz]
+      var displacement = math.subtract(dis_from_0[dis_from_0.length - 1], dis_from_0[i])
+      var col = math.cross(rot, displacement)
+      JACOBIAN.push(col)
+    }
+    var Jt = math.transpose(JACOBIAN)
+    var JJt = math.multiply(JACOBIAN, Jt)
+    var JJtinv = math.inv(JJt)
+    var JtJJtinv = math.multiply(Jt, JJtinv)
+
+    var xBodka = (x - X[X.length - 1]) / precision
+    var yBodka = (y - Y[X.length - 1]) / precision
+    var zBodka = (z - Z[X.length - 1]) / precision
+
+    if (slow_down) SPEED_UP_VECTORS.push([xBodka, yBodka, zBodka])
+
+    var docasne = []
+
+    for (let i = 0; i < UHLY.length; i++) {
+      var ThetaBodka = (JtJJtinv[0][i] * xBodka + JtJJtinv[2][i] * yBodka + JtJJtinv[1][i] * -zBodka) * 50
+      var uhol = UHLY[i] + ThetaBodka
+      docasne.push(Math.round(uhol * 100) / 100)
+      UHLY.splice(i, 1)
+      UHLY.splice(i, 0, uhol)
+
+      /*if (!slow_down) {
+        FOR_USER_ANGLES2[i].push(Math.round(uhol * 100) / 100)
+      }*/
+
+      if (adset.negative && uhol < 0) {
+        alerts(`Negative angle has been calculated, if you wish to continue with this trajectory, disable "Catch negative angles".`)
+        update_robot()
+        return
+      }
+      if (uhol > MAX_ANGLES[i].max) {
+        alerts("Maximum angle of some of your joint has been preceeded. Choose different trajectory.")
+        update_robot()
+        return
+      }
+    }
+
+    if (plot) {
+      if (record) {
+        const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const dad = new THREE.Mesh(geometry, material);
+        dad.position.set(X[X.length - 1], Y[X.length - 1], Z[X.length - 1])
+        scene.add(dad);
+        if (!showtraj) dad.visible = false
+        TRAJECTORY.push(dad)
+      }
+    }
+
+    rozdiel = Math.sqrt((xpos - X[X.length - 1]) ** 2 + (ypos - Y[X.length - 1]) ** 2 + (zpos - Z[X.length - 1]) ** 2)
+    if (rozdiel < 2) {
+      update_robot()
+      return
+    }
+
+    if (k == 999) {
+      update_robot()
+      return
+    }
+  }
+}
+
 
 function make_target() {
   let geometry = new THREE.SphereGeometry(0.8, 32, 16);
@@ -291,6 +396,7 @@ function make_target() {
 
   var obj = {
     add: function () {
+
       get_constant_jacobian()
     }
   };
@@ -313,7 +419,15 @@ function make_target() {
 
       controls.addEventListener('dragging-changed', function (event) {
         orbit.enabled = !event.value;
-        get_constant_jacobian()
+        if (!event.value) {
+          if (speed_mode == "constant") get_constant_jacobian()
+          else if (speed_mode == "slow") get_slow_down_jacobian(true, true)
+          else {
+            get_slow_down_jacobian(true, false)
+            get_slow_down_jacobian(false, true)
+            get_slow_down_jacobian(true, false)
+          }
+        }
       });
 
     }
@@ -322,22 +436,22 @@ function make_target() {
   b.name("Active IK")
 
 
-
   var controlsx = {
     rotation: 0,
+    prev: 0
   };
   var controlsy = {
     rotation: 0,
+    prev: 0
   };
   var controlsz = {
     rotation: 0,
+    prev: 0
   };
 
   const targetFolder = gui.addFolder('TARGET')
   const Position = targetFolder.addFolder('Position')
   const Rotation = targetFolder.addFolder('Rotation')
-
-  var prevx, prevz, prevy
 
   Position.add(target.position, 'x', -50, 50)
     .name("X position")
@@ -346,41 +460,26 @@ function make_target() {
   Position.add(target.position, 'z', -50, 50)
     .name("Z position")
 
-  /*Rotation.add(controlsx, 'rotation', -90, 90)
+  Rotation.add(controlsx, 'rotation', -180, 180)
     .name("X rotation")
     .onChange(function () {
-      var a
-      var b = controlsx.rotation * 0.0174532925
-      if (typeof (prevx) == "number") a = prevx
-      else a = 0
-      console.log(prevx)
-      sphere.rotateX(b - a)
-      prevx = b
+      target.rotateX((controlsx.rotation * 0.0174532925) - controlsx.prev)
+      controlsx.prev = controlsx.rotation * 0.0174532925
     });
- 
-  Rotation.add(controlsy, 'rotation', -90, 90)
+
+  Rotation.add(controlsy, 'rotation', -180, 180)
     .name("Y rotation")
     .onChange(function () {
-      var a
-      var b = controlsy.rotation * 0.0174532925
-      if (typeof (prevy) == "number") a = prevy
-      else a = 0
-      console.log(prevy)
-      sphere.rotateY(b - a)
-      prevy = b
+      target.rotateY((controlsy.rotation * 0.0174532925) - controlsy.prev)
+      controlsy.prev = controlsy.rotation * 0.0174532925
     });
- 
-  Rotation.add(controlsz, 'rotation', -90, 90)
+
+  Rotation.add(controlsz, 'rotation', -180, 180)
     .name("Z rotation")
     .onChange(function () {
-      var a
-      var b = controlsz.rotation * 0.0174532925
-      if (typeof (prevz) == "number") a = prevz
-      else a = 0
-      console.log(prevz)
-      sphere.rotateZ(b - a)
-      prevz = b
-    });*/
+      target.rotateZ((controlsz.rotation * 0.0174532925) - controlsz.prev)
+      controlsz.prev = controlsz.rotation * 0.0174532925
+    });
 
   targetFolder.open()
   Position.open()
@@ -395,7 +494,7 @@ function make_joint() {
 }
 
 function make_sphere() {
-  let geometry = new THREE.SphereGeometry(2, 32, 16);
+  let geometry = new THREE.BoxGeometry(2.2, 2.2, 2.2);
   let material = new THREE.MeshPhongMaterial({ color: 0x90ee90 });
   const sphere = new THREE.Mesh(geometry, material);
   sphere.receiveShadow = true
@@ -404,7 +503,6 @@ function make_sphere() {
   sphere.userData.notDestroy = true
   return sphere
 }
-
 
 function make_robot() {
   var controls = {
@@ -429,7 +527,7 @@ function make_robot() {
       UHLY[0] = ROTATIONS[0].rotation
       JOINTS[0].rotateY(b - a)
       ROTATIONS[0].prev = ROTATIONS[0].rotation * 0.0174532925
-    });
+    })
 
   var i = 1
   dis_from_0.forEach(e => {
@@ -461,7 +559,7 @@ function make_robot() {
     JOINTS.push(cylinder)
     if (i < dis_from_0.length) {
       cubeFolder.add(controls, 'rotation', -180, 180)
-        .name(`Joint ${i}`)
+        .name(`Joint ${i + 1}`)
         .onChange(function () {
           var k = parseInt(cylinder.userData.name)
           var a = ROTATIONS[k].prev
@@ -603,4 +701,105 @@ function alerts(text) {
   $('.alrt').append('<button type=button class=close data-dismiss=alert aria-label=Close></button>');
   $('.close').append('<span aria-hidden="true">&times;</span>');
 
+}
+
+function update_robot() {
+  for (let v = 0; v < UHLY.length; v++) {
+    JOINTS[v].rotateY(UHLY[v] * 0.0174532925 - ROTATIONS[v].prev)
+    ROTATIONS[v].prev = UHLY[v] * 0.0174532925
+    ROTATIONS[v].rotation = UHLY[v]
+  }
+  for (var ci = 0; ci < Object.keys(gui.__folders).length; ci++) {
+    var key = Object.keys(gui.__folders)[ci];
+    for (var jc = 0; jc < gui.__folders[key].__controllers.length; jc++) {
+      gui.__folders[key].__controllers[jc].updateDisplay();
+    }
+  }
+}
+
+// fis>kus
+function get_cirkular() {
+  var x = target.position.x
+  var y = target.position.y
+  var z = target.position.z
+
+  var xe = Infinity
+  var ye = Infinity
+  var ze = Infinity
+
+  for (let k = 0; k < 1000; k++) {
+    calculate_matricies()
+    var jed_matica = [[0], [0], [1]]
+    var prvy_element = math.cross(jed_matica, dis_from_0[dis_from_0.length - 1])
+    var JACOBIAN = [[prvy_element[0][0], prvy_element[0][1], prvy_element[0][2]]]
+
+    for (let i = 0; i < hom_from_0.length - 1; i++) {
+      var rotx = hom_from_0[i][0][2]
+      var roty = hom_from_0[i][1][2]
+      var rotz = hom_from_0[i][2][2]
+      var rot = [rotx, roty, rotz]
+      var displacement = math.subtract(dis_from_0[dis_from_0.length - 1], dis_from_0[i])
+      var col = math.cross(rot, displacement)
+      JACOBIAN.push(col)
+    }
+    var Jt = math.transpose(JACOBIAN)
+    var JJt = math.multiply(JACOBIAN, Jt)
+    var JJtinv = math.inv(JJt)
+    var JtJJtinv = math.multiply(Jt, JJtinv)
+
+    var xBodka = (x - X[X.length - 1]) / precision
+    var yBodka = (y - Y[X.length - 1]) / precision
+    var zBodka = (z - Z[X.length - 1]) / precision
+
+    var docasne = []
+
+    for (let i = 0; i < UHLY.length; i++) {
+      var ThetaBodka = (JtJJtinv[0][i] * xBodka + JtJJtinv[2][i] * yBodka + JtJJtinv[1][i] * -zBodka) * 50
+      var uhol = (UHLY[i] + ThetaBodka) - (k * k) * 0.000001
+      docasne.push(Math.round(uhol * 100) / 100)
+      UHLY.splice(i, 1)
+      UHLY.splice(i, 0, uhol)
+      if (adset.negative && uhol < 0) {
+        alerts(`Negative angle has been calculated, if you wish to continue with this trajectory, disable "Catch negative angles".`)
+        update_robot()
+        return
+      }
+      if (uhol > MAX_ANGLES[i].max) {
+        alerts("Maximum angle of some of your joint has been preceeded. Choose different trajectory.")
+        update_robot()
+        return
+      }
+    }
+
+    if (record) {
+      const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+      const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+      const dad = new THREE.Mesh(geometry, material);
+      dad.position.set(X[X.length - 1], Y[X.length - 1], Z[X.length - 1])
+      scene.add(dad);
+      if (!showtraj) dad.visible = false
+      TRAJECTORY.push(dad)
+
+      if (k == 0) {
+        xe = TRAJECTORY[0].position.x
+        ye = TRAJECTORY[0].position.y
+        ze = TRAJECTORY[0].position.z
+        console.log(xe, ye, ze)
+      }
+
+
+    }
+
+    if (k > 20) {
+      rozdiel = Math.sqrt((xe - X[X.length - 1]) ** 2 + (ye - Y[X.length - 1]) ** 2 + (ze - Z[X.length - 1]) ** 2)
+      if (Math.abs(ye - Y[X.length - 1]) < 0.5 && Math.abs(ze - Z[X.length - 1]) < 0.5) {
+        update_robot()
+        return
+      }
+      if (k == 200) {
+        update_robot()
+        return
+      }
+    }
+  }
 }
