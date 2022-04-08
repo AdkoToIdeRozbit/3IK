@@ -169,7 +169,7 @@ def login_homde():
             login_user(new_user, remember=True)
             return redirect("/account")
 
-    return render_template("js.html", user=current_user)
+    return render_template("three.html", user=current_user)
 
 
 @auth.route("/", methods=["GET", "POST"])
