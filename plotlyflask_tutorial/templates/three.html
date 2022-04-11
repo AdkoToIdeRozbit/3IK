@@ -1,8 +1,24 @@
 {% extends "base.html" %} {% block title %}Three {% endblock %} {% block content%}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/three.css') }}">
 
-<div id="gui"></div>
-<div style="position: relative;display: inline-block;">
+<div style="position: relative;">
+
+  <div style="position: absolute;bottom: 2%;left: 1%;">
+    <div style="font-size: large;font-weight: 500;color:white">Preview trajectory </div>
+    <input style="width: 95%;" type="range" min="0" max="1" value="0" class="precision-value">
+
+  </div>
+
+  <div style="position: absolute;color: white;z-index: 1;left: 1%;top: 0.5%;">
+    <div>End effectors position</div>
+    <div class="position" style="display: flex;flex-direction: column;">
+      <div class="xpos">X: </div>
+      <div class="ypos">Y: </div>
+      <div class="zpos">Z: </div>
+    </div>
+  </div>
+
+  <div id="gui"></div>
   <canvas id="bg" class="go">
   </canvas>
   <div class="alertDiv" style="z-index: 10;position: absolute;top: 0;right:0;padding: 0.6%;"></div>

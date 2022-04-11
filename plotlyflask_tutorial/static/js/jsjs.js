@@ -15,7 +15,10 @@ window.onload = function () {
 var button = document.getElementsByClassName("code_button");
 button[0].addEventListener("click", Code, false);
 
+
+var TYPES = []
 function Code() {
+  window.localStorage.setItem('TYPES', JSON.stringify(TYPES));
   window.localStorage.setItem('DH', JSON.stringify(DH));
   var a = ''
   JOINTS.forEach(e => {
@@ -75,6 +78,7 @@ function ID_function() {
       INPUTS = []
       TEXTS = []
       CONTROLS = []
+      TYPES = []
     }
   }
 
@@ -123,6 +127,7 @@ function onButtonClick() {
     INPUTS.pop();
     TEXTS.pop();
     CONTROLS.pop();
+    TYPES.pop()
     DH.pop();
     i = i - 1
 
@@ -412,6 +417,7 @@ function createCylinder1(x, y, z, u, rotx, roty, rotz) {
     cylinder.receiveShadow = true
     cylinder.userData.draggable = true
     cylinder.userData.one = true
+    TYPES.push(1)
     cylinder.userData.type = 1
 
     if (typeof JOINTS[i - 2] != "undefined") {
@@ -469,6 +475,7 @@ function createCylinder2(x, y, z, u, rotx, roty, rotz) {
     cylinder.receiveShadow = true
     cylinder.userData.draggable = true
     cylinder.userData.two = true
+    TYPES.push(2)
     cylinder.rotation.x = 3.14 / 2
     cylinder.userData.type = 2
 
@@ -525,6 +532,7 @@ function createCylinder3(x, y, z, u, rotx, roty, rotz) {
     cylinder.receiveShadow = true
     cylinder.userData.draggable = true
     cylinder.userData.three = true
+    TYPES.push(3)
     cylinder.rotation.z = 3.14 / 2
     cylinder.userData.type = 3
 
@@ -578,6 +586,7 @@ function createSphere(x, y, z, u, rotx, roty, rotz) {
     sphere.receiveShadow = true
     sphere.castShadow = true
     sphere.userData.type = 4
+    TYPES.push(4)
 
 
     if (typeof JOINTS[i - 2] != "undefined") {

@@ -1,8 +1,13 @@
+body {
+  background-image: url("../photos/bcgrnddd.png");
+  font-family: "Noto Sans TC", sans-serif;
+}
+
 #gui {
   z-index: 1;
   position: absolute;
-  top: 20%;
-  right: 5%;
+  top: 0;
+  right: 0;
 }
 
 .c select {
@@ -37,4 +42,39 @@
   cursor: pointer;
   font-family: inherit;
   transition: all 150ms ease;
+}
+
+.precision-value {
+  height: 200%;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  background-color: #bdc3c7;
+  width: 85%;
+  height: 5px;
+  border-radius: 5px;
+  margin: 0 auto;
+  outline: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #1265ff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  transition: .3s ease-in-out;
+}
+
+​input[type="range"]::-webkit-slider-thumb:hover {
+  background-color: white;
+  border: 2px solid #1265ff;
+  /*#e74c3c */
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.4);
 }
