@@ -73,7 +73,7 @@ function Code(id) {
   animate()
   for (let i = 0; i < JOINTS.length - 1; i++) calculate_dh(i)
   window.localStorage.setItem('DH', JSON.stringify(DH));
-
+  window.localStorage.setItem('TYPES', JSON.stringify(Types));
 }
 
 
@@ -306,7 +306,7 @@ function create_axes(cylinder, i, rotx, roty, rotz) {
     }
   }
 }
-
+var Types = []
 function createCylinder1(x, y, z, u, rotx, roty, rotz) {
   if (typeof JOINTS[JOINTS.length - 2] != "undefined" && JOINTS[JOINTS.length - 1].userData.end) {
     alerts()
@@ -330,6 +330,7 @@ function createCylinder1(x, y, z, u, rotx, roty, rotz) {
     cylinder.receiveShadow = true
     cylinder.userData.draggable = true
     cylinder.userData.one = true
+    Types.push(1)
 
     if (typeof JOINTS[i - 2] != "undefined") {
       let x1 = JOINTS[i - 2].position.x
@@ -389,6 +390,7 @@ function createCylinder2(x, y, z, u, rotx, roty, rotz) {
     cylinder.receiveShadow = true
     cylinder.userData.draggable = true
     cylinder.userData.two = true
+    Types.push(2)
     cylinder.rotation.x = 3.14 / 2
 
     if (typeof JOINTS[i - 2] != "undefined") {
@@ -446,6 +448,7 @@ function createCylinder3(x, y, z, u, rotx, roty, rotz) {
     cylinder.receiveShadow = true
     cylinder.userData.draggable = true
     cylinder.userData.three = true
+    Types.push(3)
     cylinder.rotation.z = 3.14 / 2
 
     if (typeof JOINTS[i - 2] != "undefined") {
@@ -525,6 +528,7 @@ function createSphere(x, y, z, u, rotx, roty, rotz) {
     create_axes(sphere, i - 1, rotx, roty, rotz)
     sphere.userData.name = `${i}`
     sphere.userData.end = true
+    Types.push(4)
     sphere.position.set(pos.x, pos.y, pos.z)
     scene.add(sphere)
     JOINTS.push(sphere)
