@@ -33,7 +33,6 @@ body {
 }
 
 
-
 .alrt {
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -45,9 +44,21 @@ body {
 
 
 #div {
-  transform: translateX(3%);
+  margin-top: 2%;
+  margin-left: 4%;
   outline-style: solid;
   outline-color: #24252a;
+  border-radius: 10px;
+}
+
+canvas,
+li.title {
+  border-radius: 10px;
+}
+
+
+.close-bottom {
+  border-radius: 5px;
 }
 
 
