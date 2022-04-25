@@ -91,6 +91,7 @@ li.title {
 }
 
 .precision-value {
+  position: static !important;
   height: 200%;
 }
 
@@ -100,7 +101,6 @@ input[type="range"] {
   width: 85%;
   height: 5px;
   border-radius: 5px;
-  margin: 0 auto;
   outline: 0;
 }
 
