@@ -5,7 +5,6 @@
   margin: 5%;
 }
 
-
 .edit_robot_flex {
   display: flex;
 }
@@ -45,6 +44,7 @@
 
 .note_data_text {
   width: 40%;
+  cursor: copy;
   font-size: large;
   word-wrap: break-word;
 }

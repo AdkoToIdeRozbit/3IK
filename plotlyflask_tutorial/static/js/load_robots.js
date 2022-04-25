@@ -17,11 +17,23 @@ const Width = window.innerWidth / 3;
 const Height = window.innerHeight / 3;
 renderer.setSize(Width, Height);
 
+
 window.onload = function () {
   $(".kontainer li").each(function (index) {
     var id = $(this).text().slice(9)
     var note_id = `.${this.className}`
-    note_id = note_id.slice(16)
+    note_id = note_id.match(/\d+/)[0] // "3"
+    var realID = $(`.note_data_text${note_id}`).text()
+
+    this.onclick = function () {
+      document.execCommand("copy");
+    }
+    this.addEventListener("copy", function (event) {
+      event.preventDefault();
+      if (event.clipboardData) {
+        event.clipboardData.setData("text/plain", realID);
+      }
+    });
 
     $(`<div id=divRobot${index} class=divRobot${index} class=divRobot></div>`).insertBefore($(`.button${note_id}`))
     $(`#divRobot${index}`).addClass('divRobot')

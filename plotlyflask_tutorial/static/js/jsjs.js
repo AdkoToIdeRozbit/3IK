@@ -53,6 +53,7 @@ function ID_function() {
   });
 
   let lines_positions = splits[0].split(',')
+
   lines_positions = lines_positions.map(function (x) {
     if (x.includes("z") || x.includes("x") || x.includes("y") || x.length == 0 || x.includes("e")) return x
     else return parseFloat(x, 10);
@@ -84,11 +85,13 @@ function ID_function() {
 
   let end = lines_positions.length
   for (let i = 0; i < (end / 7); i++) {
-    if (lines_positions[3].includes("z")) createCylinder1(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
-    else if (lines_positions[3].includes("y")) createCylinder3(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
-    else if (lines_positions[3].includes("x")) createCylinder2(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
-    else if (lines_positions[3].includes("e")) createSphere(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
-    for (let i = 0; i < 7; i++) lines_positions.splice(0, 1)
+    if (lines_positions.length > 4) {
+      if (lines_positions[3].includes("z")) createCylinder1(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
+      else if (lines_positions[3].includes("y")) createCylinder3(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
+      else if (lines_positions[3].includes("x")) createCylinder2(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
+      else if (lines_positions[3].includes("e")) createSphere(lines_positions[0], lines_positions[1], lines_positions[2], i + 1, lines_positions[4], lines_positions[5], lines_positions[6])
+      for (let i = 0; i < 7; i++) lines_positions.splice(0, 1)
+    }
   }
   var compute_button = document.getElementById('compute');
   var save_button = document.getElementById('save_diagram');
@@ -213,15 +216,40 @@ function create_input(x, y, z, i) {
 
 }
 
+
 function onWindowResize() {
-  renderer.setSize(window.innerWidth * 0.65, window.innerHeight * 0.8);
-  renderer2.setSize(window.innerWidth * 0.65, window.innerHeight * 0.8);
+  var Width;
+  var Height = window.innerHeight * 0.8;
+  var mq = window.matchMedia("(max-width: 1000px)");
+  if (mq.matches) {
+    Width = window.innerWidth * 0.85;
+  }
+  else {
+    Width = window.innerWidth * 0.65;
+  }
+  renderer.setSize(Width, Height);
+  renderer2.setSize(Width, Height);
+  camera.aspect = Width / Height;
+  camera.updateProjectionMatrix();
+
+  var dis = -75 * $('.go').width() / $('.go').height()
+
+  CHOOSE_JOINTS[0].position.set(dis, 70, - 300)
+  CHOOSE_JOINTS[1].position.set(dis, 55, - 300)
+  CHOOSE_JOINTS[2].position.set(dis, 40, - 300)
+  CHOOSE_JOINTS[3].position.set(dis, 25, - 300)
+
 }
+
 window.addEventListener('resize', onWindowResize);
 
 let radius = 3.7;
 let height = 7
-let cylinder1 = new THREE.Mesh(new THREE.CylinderBufferGeometry(radius, radius, height, 32), new THREE.MeshPhongMaterial({ color: 0x90ee90 }))
+
+let cylinder1 = new THREE.Mesh(new THREE.CylinderBufferGeometry(radius, radius, height, 32), new THREE.MeshPhongMaterial({
+  color: 0x90ee90
+}))
+
 cylinder1.castShadow = true
 cylinder1.receiveShadow = true
 cylinder1.userData.name = 'joint1'
@@ -243,11 +271,11 @@ cylinder2.userData.notDestroy = true
 cylinder2.userData.click2 = true
 scene.add(camera)
 camera.add(cylinder2)
-console.log($('.go').height())
 var angle = scale(a.z, 1, -1, Math.PI, 0)
 cylinder2.position.set(dis, 55, - 300)
 cylinder2.rotation.z = 3.14 / 2
 cylinder2.rotation.y = 3.14 / 2
+
 
 let cylinder3 = new THREE.Mesh(new THREE.CylinderBufferGeometry(radius, radius, height, 32), new THREE.MeshPhongMaterial({ color: 0x90ee90 }))
 cylinder3.castShadow = true
@@ -272,6 +300,7 @@ scene.add(camera)
 camera.add(sphere)
 sphere.position.set(dis, 25, - 300)
 
+var CHOOSE_JOINTS = [cylinder1, cylinder2, cylinder3, sphere]
 
 const orbit = new OrbitControls(camera, renderer2.domElement);
 orbit.addEventListener('change', onPositionChange);
@@ -292,6 +321,8 @@ function scale(number, inMin, inMax, outMin, outMax) {
 //scene.background = new THREE.Color(0x3A1D21);
 
 function animate() {
+  resetMaterials()
+  hoverObjects()
   renderer.render(scene, camera);
   renderer2.render(scene2, camera);
   requestAnimationFrame(animate);
@@ -336,22 +367,53 @@ var i = 0
 var CONTROLS = []
 var AXES = []
 
+const loader = new FontLoader();
+loader.load('./static/fonts/Calisto MT_Italic.json', function (font) {
+  let color = 0x006699;
+  let matLite = new THREE.MeshBasicMaterial({
+    color: color,
+    transparent: true,
+    side: THREE.DoubleSide
+  });
+  for (let i = 0; i < 4; i++) {
+    let message = `Add joint`;
+    let shapes = font.generateShapes(message, 100);
+    let geometry = new THREE.ShapeGeometry(shapes);
+    geometry.computeBoundingBox();
+    var xMid = - 0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+    geometry.translate(xMid, 0, 0);
+    // make shape ( N.B. edge view not visible )
+    let text = new THREE.Mesh(geometry, matLite);
+    let a = CHOOSE_JOINTS[i]
+
+    text.position.x = a.position.x + 20
+    text.position.y = a.position.y - 1
+    text.position.z = a.position.z
+
+    a.children.remove()
+    a.children = text
+    text.scale.set(0.04, 0.04, 0.04)
+    camera.add(text);
+  }
+})
+
 function create_axes(cylinder, i, rotx, roty, rotz) {
-  const loader = new GLTFLoader()
-  loader.load('../static/glb/axes.glb', function (gltf) {
+  const gltfloader = new GLTFLoader()
+  gltfloader.load('../static/glb/axes.glb', function (gltf) {
     let root = gltf.scene;
     scene.add(root)
     cylinder.children = root
     root.parent = cylinder
     root.scale.set(1.5, 1.5, 1.5)
-    root.position.set(- 11.5, 0, 0)
+    root.position.set(- 10.5, 0, 0)
     root.userData.name = `${i}`
     let controls = new TransformControls(camera, renderer2.domElement)
     controls.setMode('rotate')
     controls.setSize(controls.size - 0.7)
     controls.attach(root)
     controls.setRotationSnap(Math.PI / 2)
-    if (cylinder.userData.three) root.position.set(0, 11.5, 0)
+    controls.setTranslationSnap(3.5);
+    if (cylinder.userData.three) root.position.set(0, 10.5, 0)
 
     if (rotx == '') rotx = 0
     if (roty == '') roty = 0
@@ -370,9 +432,12 @@ function create_axes(cylinder, i, rotx, roty, rotz) {
     if (rotz == -3) rotz = -Math.PI
     if (rotx) {
 
-      root.rotation.x = -cylinder.rotation.x + rotx
+      root.rotateX(-cylinder.rotation.x + rotx)
+      root.rotateY(-cylinder.rotation.y + roty)
+      root.rotateZ(-cylinder.rotation.z + rotz)
+      /*root.rotation.x = -cylinder.rotation.x + rotx
       root.rotation.y = -cylinder.rotation.y + roty
-      root.rotation.z = -cylinder.rotation.z + rotz
+      root.rotation.z = -cylinder.rotation.z + rotz*/
     }
 
     scene.add(controls)
@@ -396,7 +461,7 @@ function alerts(text) {
 
 function createCylinder1(x, y, z, u, rotx, roty, rotz) {
   if (typeof JOINTS[JOINTS.length - 2] != "undefined" && JOINTS[JOINTS.length - 1].userData.end) {
-    alerts('End-effector must be the last part of the chain.')
+    alerts('End-effector is the last part of the chain.')
   }
   else {
     i = i + 1
@@ -454,7 +519,7 @@ var TRANSFORMS = []
 
 function createCylinder2(x, y, z, u, rotx, roty, rotz) {
   if (typeof JOINTS[JOINTS.length - 2] != "undefined" && JOINTS[JOINTS.length - 1].userData.end) {
-    alerts('End-effector must be the last part of the chain.')
+    alerts('End-effector is the last part of the chain.')
   }
   else {
     i = i + 1
@@ -511,7 +576,7 @@ function createCylinder2(x, y, z, u, rotx, roty, rotz) {
 
 function createCylinder3(x, y, z, u, rotx, roty, rotz) {
   if (typeof JOINTS[JOINTS.length - 2] != "undefined" && JOINTS[JOINTS.length - 1].userData.end) {
-    alerts('End-effector must be the last part of the chain.')
+    alerts('End-effector is the last part of the chain.')
   }
   else {
     i = i + 1
@@ -568,7 +633,7 @@ function createCylinder3(x, y, z, u, rotx, roty, rotz) {
 
 function createSphere(x, y, z, u, rotx, roty, rotz) {
   if (typeof JOINTS[JOINTS.length - 2] != "undefined" && JOINTS[JOINTS.length - 1].userData.end) {
-    alerts('End-effector must be the last part of the chain.')
+    alerts('End-effector is the last part of the chain.')
   }
   else {
     i = i + 1
@@ -625,15 +690,47 @@ const clickMouse = new THREE.Vector2();  // create once
 const moveMouse = new THREE.Vector2();   // create once
 var draggable = new THREE.Object3D;
 
+
+function resetMaterials() {
+  for (let i = 0; i < 4; i++) {
+    camera.children[i].material.opacity = 1
+    camera.children[i].children.visible = false
+  }
+
+}
+
+var pos = new THREE.Vector3()
+
+function hoverObjects() {
+  raycaster.setFromCamera(clickMouse, camera);
+  const cylinders = raycaster.intersectObjects(CHOOSE_JOINTS)
+  for (let i = 0; i < cylinders.length; i++) {
+    cylinders[i].object.material.transparent = true
+    cylinders[i].object.material.opacity = 0.5
+    cylinders[i].object.children.visible = true
+  }
+}
+
 function intersect(pos = THREE.Vector2) {
   raycaster.setFromCamera(pos, camera);
-  if (raycaster.intersectObjects(camera.children).length == 1)
+  if (raycaster.intersectObjects(camera.children).length == 1) {
     return raycaster.intersectObjects(camera.children);
+  }
   else return raycaster.intersectObjects(scene.children);
 }
 
 var LINES = []
 var inputtext = []
+
+for (let i = 0; i < 4; i++) {
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshBasicMaterial({
+    transparent: true,
+    side: THREE.DoubleSide
+  });
+  const cube = new THREE.Mesh(geometry, material);
+  CHOOSE_JOINTS[i].children = cube
+}
 
 function connect_joints(a, b, i) {
   if (!!a) {  //if a exisst we  draw
@@ -740,14 +837,36 @@ function add_event_listener(element, object) {
 };
 
 
-function hover() {
-  // CAMERA.ATTACH MIGHT BE IMPORTANT, INSTEAD OF CAMERA.ADD
+window.addEventListener('mousemove', event => {
+  var offsets = document.getElementById('bg').getBoundingClientRect();
+  clickMouse.x = ((event.clientX - offsets.left) / Width) * 2 - 1;
+  clickMouse.y = -((event.clientY - offsets.top) / Height) * 2 + 1;
+})
 
+var change_controls_mode = 0
+document.onpointerdown = function (event) {
+  switch (event.button) {
+    case 2:
+      var offsets = document.getElementById('bg').getBoundingClientRect();
+      clickMouse.x = ((event.clientX - offsets.left) / Width) * 2 - 1;
+      clickMouse.y = -((event.clientY - offsets.top) / Height) * 2 + 1;
 
-  //raycaster.setFromCamera(moveMouse, camera);
-  //const intersects = raycaster.intersectObjects(camera.children);
-  //intersects.object.material.transparent = true;
-  //intersects.object.material.alphaTest = 0.5;
+      raycaster.setFromCamera(clickMouse, camera);
+      const found = raycaster.intersectObjects(AXES)
+      if (found.length > 0) {
+        let t = parseInt(found[0].object.parent.parent.userData.name)
+        if (change_controls_mode % 2 == 0) {
+          CONTROLS[t].mode = 'translate'
+          CONTROLS[t].setSize(0.5)
+        }
+        else {
+          CONTROLS[t].mode = 'rotate'
+          CONTROLS[t].setSize(0.3)
+        }
+
+        change_controls_mode++
+      }
+  }
 }
 
 window.addEventListener('click', event => {
@@ -755,12 +874,16 @@ window.addEventListener('click', event => {
     draggable = null
     return
   }
-
   // THREE RAYCASTER
   var offsets = document.getElementById('bg').getBoundingClientRect();
   clickMouse.x = ((event.clientX - offsets.left) / Width) * 2 - 1;
   clickMouse.y = -((event.clientY - offsets.top) / Height) * 2 + 1;
 
+  /*const kiahne = intersect(CONTROLS)
+  //if (kiahne.length > 0) {
+  console.log(kiahne)
+  //}
+  console.log(CONTROLS)*/
   const found = intersect(clickMouse);
   if (found.length > 0) {
     if (found[0].object.userData.draggable) {
@@ -799,7 +922,6 @@ window.addEventListener('click', event => {
 
 var TEXTS = []
 
-const loader = new FontLoader();
 function create_text(x, y, z, i) {
   loader.load('./static/fonts/Calisto MT_Italic.json', function (font) {
     const color = 0x006699;
@@ -832,7 +954,6 @@ function create_text(x, y, z, i) {
 function add_event_listener_rotate(element, object) {
   element.addEventListener('dragging-changed', function (event) {  // frames rotated
     orbit.enabled = !event.value;
-
     if (event.value == false) {
       create_table()
       create_id()
@@ -880,6 +1001,9 @@ function create_id() {
       let xrot = Math.round(JOINTS[i].children.rotation.x + JOINTS[i].rotation.x)
       let yrot = Math.round(JOINTS[i].children.rotation.y + JOINTS[i].rotation.y)
       let zrot = Math.round(JOINTS[i].children.rotation.z + JOINTS[i].rotation.z)
+      /*let xrot = 0
+      let yrot = 0
+      let zrot = 0*/
 
       if (xrot == 0) xrot = ''
       if (yrot == 0) yrot = ''
@@ -924,6 +1048,7 @@ function create_table() {
         inputtext.splice(i, 1)
         inputtext.splice(i, 0, document.getElementById(`${i}in`).value)
       }
+      if (i == 0) robotvec.set(0, 0, 0)
       DH_params = calculate_dh(i)
       let theta = DH_params[0]
       let alfa = DH_params[1]
@@ -966,6 +1091,7 @@ let xdir = new THREE.Vector3(1, 0, 0)
 let ydir = new THREE.Vector3(0, 0, -1)
 let zdir = new THREE.Vector3(0, 1, 0)
 let DH = []
+var robotvec = new THREE.Vector3
 
 function calculate_dh(y) {    // each time controls are added or changed recalculate....
 
@@ -1014,11 +1140,12 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
   if (!x1dir.equals(x0dir)) theta *= -1
   theta = Math.round(theta * 57.2957795)
 
-  var alfa = z0dir.angleTo(z1dir)
+  var alfa = z1dir.angleTo(z0dir)
   z0dir.applyAxisAngle(X1dir, alfa);
   z0dir.round()
   if (!z0dir.equals(z1dir)) alfa *= -1
   alfa = Math.round(alfa * 57.2957795)
+
 
   let xbegin = LINES[y].geometry.parameters.path.points[0].x
   let xend = LINES[y].geometry.parameters.path.points[1].x
@@ -1033,18 +1160,24 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
   let zvec = zend - zbegin
 
   var Linevec = new THREE.Vector3(xvec, yvec, zvec)
+  Linevec.normalize()
+  Linevec.x *= parseFloat(inputtext[y])
+  Linevec.y *= parseFloat(inputtext[y])
+  Linevec.z *= parseFloat(inputtext[y])
 
-  var rvalue
-  if (isNaN(parseFloat(inputtext[y]))) rvalue = 0
-  else rvalue = parseFloat(inputtext[y])
+  robotvec.add(Linevec)
+
+  var rvalue = robotvec.length()
+  /*if (isNaN(parseFloat(inputtext[y]))) rvalue = 0
+  else rvalue = parseFloat(inputtext[y])*/
   let rangle = Math.cos(X1dir.angleTo(Linevec))
 
   var r = Math.abs(Math.round(rangle * rvalue * 100) / 100)
 
   let dangle = Math.cos(Z0dir.angleTo(Linevec))
-  //console.log(rvalue, dangle, Z0dir, Linevec)
   var d = Math.abs(Math.round(dangle * rvalue * 100) / 100)
 
+  if (r != 0 || d != 0) robotvec.set(0, 0, 0)
 
   DH.splice(y, 1)
   DH.splice(y, 0, [theta, alfa, r, d])

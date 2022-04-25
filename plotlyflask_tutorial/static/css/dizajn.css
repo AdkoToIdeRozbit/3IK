@@ -62,11 +62,6 @@ body {
   z-index: 10;
 }
 
-.rotate_svg {
-  display: flex;
-  justify-content: center;
-}
-
 .hello_text {
   margin-top: 2%;
   text-align: center;
@@ -92,42 +87,6 @@ image {
   align-items: center;
 }
 
-/* Arrow & Hover Animation */
-#more-arrows {
-  transform: translateY(5px);
-  width: 80px !important;
-  height: 70px !important;
-}
-
-#more-arrows polygon {
-  fill: #000000;
-  transition: all 0.2s ease-out;
-}
-
-#more-arrows polygon.arrow-bottom {
-  transform: translateY(-18px);
-}
-
-#more-arrows polygon.arrow-top {
-  transform: translateY(18px);
-}
-
-polygon {
-  fill: rgb(0, 0, 0);
-  transition: all 0.2s ease-out;
-}
-
-polygon.arrow-middle {
-  opacity: 0.75;
-}
-
-polygon.arrow-top {
-  opacity: 0.5;
-}
-
-.rotate_svg {
-  transform: rotate(270deg);
-}
 
 
 .add_text {

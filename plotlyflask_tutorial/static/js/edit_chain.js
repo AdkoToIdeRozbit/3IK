@@ -74,6 +74,7 @@ function Code(id) {
   for (let i = 0; i < JOINTS.length - 1; i++) calculate_dh(i)
   window.localStorage.setItem('DH', JSON.stringify(DH));
   window.localStorage.setItem('TYPES', JSON.stringify(Types));
+  console.log(DH)
 }
 
 
@@ -267,9 +268,12 @@ function create_axes(cylinder, i, rotx, roty, rotz) {
       if (rotz == -3) rotz = -Math.PI
       if (rotx) {
 
-        root.rotation.x = -cylinder.rotation.x + rotx
+        root.rotateX(-cylinder.rotation.x + rotx)
+        root.rotateY(-cylinder.rotation.y + roty)
+        root.rotateZ(-cylinder.rotation.z + rotz)
+        /*root.rotation.x = -cylinder.rotation.x + rotx
         root.rotation.y = -cylinder.rotation.y + roty
-        root.rotation.z = -cylinder.rotation.z + rotz
+        root.rotation.z = -cylinder.rotation.z + rotz*/
       }
 
       scene.add(controls)
@@ -299,10 +303,12 @@ function create_axes(cylinder, i, rotx, roty, rotz) {
     if (roty == -3) roty = -Math.PI
     if (rotz == -3) rotz = -Math.PI
     if (rotx) {
-
-      root.rotation.x = -cylinder.rotation.x + rotx
+      root.rotateX(-cylinder.rotation.x + rotx)
+      root.rotateY(-cylinder.rotation.y + roty)
+      root.rotateZ(-cylinder.rotation.z + rotz)
+      /*root.rotation.x = -cylinder.rotation.x + rotx
       root.rotation.y = -cylinder.rotation.y + roty
-      root.rotation.z = -cylinder.rotation.z + rotz
+      root.rotation.z = -cylinder.rotation.z + rotz*/
     }
   }
 }
@@ -732,8 +738,10 @@ function create_id() {
 let xdir = new THREE.Vector3(1, 0, 0)
 let ydir = new THREE.Vector3(0, 0, -1)
 let zdir = new THREE.Vector3(0, 1, 0)
+var robotvec = new THREE.Vector3
 
 function calculate_dh(y) {    // each time controls are added or changed recalculate....
+
   xdir.applyEuler(JOINTS[y].children.rotation)
   xdir.applyEuler(JOINTS[y].rotation)
   let X0dir = xdir.clone()
@@ -779,11 +787,12 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
   if (!x1dir.equals(x0dir)) theta *= -1
   theta = Math.round(theta * 57.2957795)
 
-  var alfa = z0dir.angleTo(z1dir)
+  var alfa = z1dir.angleTo(z0dir)
   z0dir.applyAxisAngle(X1dir, alfa);
   z0dir.round()
   if (!z0dir.equals(z1dir)) alfa *= -1
   alfa = Math.round(alfa * 57.2957795)
+
 
   let xbegin = LINES[y].geometry.parameters.path.points[0].x
   let xend = LINES[y].geometry.parameters.path.points[1].x
@@ -798,19 +807,31 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
   let zvec = zend - zbegin
 
   var Linevec = new THREE.Vector3(xvec, yvec, zvec)
+  Linevec.normalize()
+  Linevec.x *= parseFloat(inputtext[y])
+  Linevec.y *= parseFloat(inputtext[y])
+  Linevec.z *= parseFloat(inputtext[y])
 
+  robotvec.add(Linevec)
+
+  var rvalue = robotvec.length()
+  /*if (isNaN(parseFloat(inputtext[y]))) rvalue = 0
+  else rvalue = parseFloat(inputtext[y])*/
   let rangle = Math.cos(X1dir.angleTo(Linevec))
-  var rvalue = inputtext[y]
 
   var r = Math.abs(Math.round(rangle * rvalue * 100) / 100)
 
-  let dangle = Math.round(Math.cos(Z0dir.angleTo(Linevec)))
+  let dangle = Math.cos(Z0dir.angleTo(Linevec))
   var d = Math.abs(Math.round(dangle * rvalue * 100) / 100)
 
+  if (r != 0 || d != 0) robotvec.set(0, 0, 0)
 
   DH.splice(y, 1)
   DH.splice(y, 0, [theta, alfa, r, d])
+
 }
+
+
 
 
 function add_event_listener_rotate(element, object) {

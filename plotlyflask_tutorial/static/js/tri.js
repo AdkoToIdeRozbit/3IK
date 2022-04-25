@@ -50,7 +50,6 @@ var LINES = []
 var activeIK = {
   active: true
 }
-
 var Types = []
 var AXIS = []
 var PREV = []
@@ -65,7 +64,8 @@ var pos = new THREE.Vector3()
 var pos2 = new THREE.Vector3()
 var roty = new THREE.Vector3()
 var wristpos = new THREE.Vector3()
-
+var wristvec = new THREE.Vector3()
+var smervec = new THREE.Vector3()
 
 var adset = {
   negative: false,
@@ -73,45 +73,72 @@ var adset = {
   precision: "Medium",
   manipulate: "Transform",
 }
-
 var trajectory_angles = []
+
+document.getElementById("get_angles").addEventListener("click", function () {   // output angles for trajecyory
+  if (trajectory_angles.length > 0) {
+    $(".output_angles").html(JSON.stringify(trajectory_angles))
+    $(".output_angles").height(300)
+  }
+  else {
+    $(".output_angles").html('')
+    $(".output_angles").height(0)
+  }
+});
+
 
 const gui = new GUI({ width: 300, autoPlace: false })
 
 $("#gui").append($(gui.domElement));
 
+var nasobok = 1
+
+
+function onWindowResize() {
+  Height = window.innerHeight * 0.9;
+  var mq = window.matchMedia("(max-width: 1000px)");
+  if (mq.matches) Width = window.innerWidth * 0.94;
+  else Width = window.innerWidth * 0.94;
+  renderer.setSize(Width, Height);
+  camera.aspect = Width / Height;
+  camera.updateProjectionMatrix();
+  $('#div').height(renderer.domElement.height);
+  $('#div').width(renderer.domElement.width);
+}
+window.addEventListener('resize', onWindowResize);
+
+
+var Height, Width
 init();
 animate();
 function init() {
-  var canvas = document.getElementById("bg")
-  renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas, alpha: true });
-  var Width;
-  var Height = window.innerHeight * 0.8;
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+  Height = window.innerHeight * 0.9;
   var mq = window.matchMedia("(max-width: 1000px)");
-  if (mq.matches) {
-    Width = window.innerWidth * 0.991;
-  }
-  else {
-    Width = window.innerWidth * 0.991;
-    renderer.setSize(Width, Height);
-  }
+  if (mq.matches) Width = window.innerWidth * 0.94;
+  else Width = window.innerWidth * 0.94;
+
+  renderer.setSize(Width, Height);
   renderer.setPixelRatio(window.devicePixelRatio);
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x3E3E3E);
   camera = new THREE.PerspectiveCamera(45, Width / Height, 1, 10000);
+  camera.position.x = 100;
   camera.position.y = 40;
-  camera.position.z = 100;
+  camera.position.z = 175;
+
   camera.lookAt(new THREE.Vector3(0, 0, 0));
   orbit = new OrbitControls(camera, renderer.domElement);
+  $("#div").append(renderer.domElement)
+
+  $('#div').height(renderer.domElement.height);
+  $('#div').width(renderer.domElement.width);
+  renderer.domElement.style.position = 'absolute';
 
   var gridXZ = new THREE.GridHelper(100, 10, new THREE.Color(0xff0000), new THREE.Color(0xffffff));
   scene.add(gridXZ);
 
-
-  /*const light = new THREE.PointLight(0xfffff0, 1, 100);
-  light.position.set(50, 50, 50);
-  scene.add(light);*/
-  // ambient light
   let hemiLight = new THREE.AmbientLight(0xffffff, 0.20);
   hemiLight.userData.notDestroy = true
   scene.add(hemiLight);
@@ -131,11 +158,12 @@ function init() {
 
 
   DH = JSON.parse(localStorage.getItem("DH"))
-  //DH = [[0, -90, 0, 29], [-90, 0, 27, 0], [0, -90, 7, 0], [0, 90, 0, 30], [0, -90, 0, 0], [0, 0, 0, 7]]
-  //Types = [1, 2, 2, 4]
-  //Types = [1, 2, 2, 3, 2, 3, 4]
+  //DH = [[0, -90, 0, 32.7], [90, 0, 29, 0], [0, -90, 0, 0], [0, 90, 0, 30], [0, -90, 0, 0], [0, 0, 0, 6.4]]  // IRB 1100 0.58m
   Types = JSON.parse(localStorage.getItem("TYPES"))
-  console.log(Types)
+  if (arrayEquals(Types, [1, 2, 2, 3, 2, 3, 4]) && DH[0][1] < 0) {
+    DH[1][0] *= -1
+  }
+  else if (arrayEquals(Types, [1, 2, 2, 3, 2, 3, 4]) && DH[0][1] > 0) nasobok = -1
 
   for (let i = 0; i < DH.length; i++) {
     THETAS.push(DH[i][0] * 0.0174532925)
@@ -216,18 +244,35 @@ function make_more_settings() {
       .name(`Max angle of ${i + 1}. joint`)
   }
 
-
-  var obj = {
-    add: function () {
-      get_constant_jacobian()
-    }
-  };
+  var obj
+  if (arrayEquals(Types, [1, 2, 2, 3, 2, 3, 4])) {
+    obj = {
+      add: function () {
+        get_constant_jacobian6DOF()
+      }
+    };
+  }
+  else {
+    obj = {
+      add: function () {
+        get_constant_jacobian()
+      }
+    };
+  }
   var a = gui.add(obj, 'add');
   a.name("Compute IK")
 
   var b = gui.add(activeIK, 'active');
   b.name("Active IK")
 }
+
+function arrayEquals(a, b) {
+  return Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index]);
+}
+
 
 function make_trajectory() {
   const abba = gui.addFolder('TRAJECTORY')
@@ -240,11 +285,11 @@ function make_trajectory() {
   abba.add(adset, "manipulate", ["Transform", "Rotate", "Plane"]).name("Manipulate").onChange(function () {
     if (adset.manipulate == "Transform") {
       moves.translationXP.visible = true;
-      moves.translationXN.visible = false;
+      moves.translationXN.visible = true;
       moves.translationYP.visible = true;
-      moves.translationYN.visible = false;
+      moves.translationYN.visible = true;
       moves.translationZP.visible = true;
-      moves.translationZN.visible = false;
+      moves.translationZN.visible = true;
       moves.rotationX.visible = false;
       moves.rotationY.visible = false;
       moves.rotationZ.visible = false;
@@ -321,117 +366,144 @@ function make_trajectory() {
 
 }
 
+function scale(number, inMin, inMax, outMin, outMax) {
+  return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
+function get_constant_jacobian6DOF() {
+  if (obalka.containsPoint(target.position)) $(".close").click() //closes not in reach alert
+  else alerts("This point is outside of reach for your robot.")
+  roty.set(0, 1, 0)
+  roty.applyEuler(target.rotation)
+  JOINTS[JOINTS.length - 1].getWorldPosition(pos)
+  JOINTS[4].getWorldPosition(pos2)
+
+  rozdiel = Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2 + (pos.z - pos2.z) ** 2)
+  var goalx = target.position.x - (roty.x * rozdiel) //WRIST POSITION
+  var goaly = target.position.y - (roty.y * rozdiel)
+  var goalz = target.position.z - (roty.z * rozdiel)
+
+  var xBodka = (goalx - pos2.x) / (precision)
+  var yBodka = (goaly - pos2.y) / (precision)
+  var zBodka = (goalz - pos2.z) / (precision)
+
+  smervec.set(xBodka, yBodka, zBodka)
+  JOINTS[5].getWorldPosition(wristvec)
+
+  var l0 = LINES[0].geometry.parameters.path.points[1].distanceTo(LINES[0].geometry.parameters.path.points[0])
+  var l1 = LINES[1].geometry.parameters.path.points[1].distanceTo(LINES[1].geometry.parameters.path.points[0])
+  var l2 = LINES[2].geometry.parameters.path.points[1].distanceTo(LINES[2].geometry.parameters.path.points[0])
+  var l3 = LINES[3].geometry.parameters.path.points[1].distanceTo(LINES[3].geometry.parameters.path.points[0])
+
+  for (let i = 1; i < precision + 1; i++) {
+    var x = wristvec.x + i * smervec.x  //WRIST POSITION
+    var y = wristvec.y + i * smervec.y
+    var z = wristvec.z + i * smervec.z
+    wristpos.set(x, y, z)
+
+    var joint1_angle = (Math.atan2(-z, x) * 57.2957795)
+    UHLY[0] = joint1_angle
+
+    pos2 = wristpos.clone()
+    JOINTS[1].getWorldPosition(pos)
+    pos2.y = pos2.y - (pos2.y - pos.y)
+    var r = pos.distanceTo(pos2)
+    var alpha = math.atan2(y - l0, r) // x - JOINTS[1].position.x (world)
+
+    var s = Math.sqrt((y - l0) ** 2 + r ** 2)
+    var l4 = Math.sqrt(l2 ** 2 + l3 ** 2)
+    var beta = math.acos((l1 ** 2 + s ** 2 - l4 ** 2) / (2 * l1 * s))
+    var joint2_angle = (((Math.PI / 2) - beta - alpha) * 57.2957795) * nasobok
+    UHLY[1] = joint2_angle
+
+    var gamma = math.acos((l1 ** 2 + l4 ** 2 - s ** 2) / (2 * l1 * l4))
+    var theta = math.atan(l3 / l2)
+
+    var joint3_angle = ((Math.PI - gamma - theta) * 57.2957795) * nasobok
+    UHLY[2] = joint3_angle
+
+    var m = new THREE.Matrix4()
+    const threerot = new THREE.Euler(target.rotation.x, -target.rotation.z, target.rotation.y);
+    m.makeRotationFromEuler(threerot)
+
+    var R0_6 = [[m.elements[0], m.elements[1], m.elements[2]],
+    [m.elements[4], m.elements[5], m.elements[6]],
+    [m.elements[8], m.elements[9], m.elements[10]]]
+
+    /*update_robot()
+    var a = JOINTS[2].matrixWorld
+    var R0_3 = [[a.elements[0], a.elements[1], a.elements[2]],
+    [a.elements[4], a.elements[5], a.elements[6]],
+    [a.elements[8], a.elements[9], a.elements[10]]]*/
+
+    calculate_matricies()
+    var a = hom_from_0[2]
+    var R0_3 = [[a[0][0], a[0][1], a[0][2]],
+    [a[1][0], a[1][1], a[1][2]],
+    [a[2][0], a[2][1], a[2][2]]]
+
+
+    var R0_3inv = math.transpose(R0_3)
+    var R3_6 = math.multiply(R0_3inv, R0_6)
+
+    /*for (let j = 0; j < 3; j++) {
+      for (let k = 0; k < 3; k++) {
+        var difference = R3_6[j][k] - R0_6[j][k]  //the amount it has to change
+        //console.log(difference / (precision - i))
+        R0_3[j][k] = R0_6[j][k] + (difference / (precision - i))
+      }
+    }*/
+
+    //var R3_6 = math.multiply(R0_3inv, R0_6)
+
+    //if (target.position.x < 0) var joint4_angle = -180 - (math.atan(R3_6[1][2] / R3_6[0][2]) * 57.2957795)
+    var joint4_angle = (math.atan(R3_6[1][2] / R3_6[0][2]) * 57.2957795)  // 180 - the_angle for moveing through 0 :(
+    if (wristpos.x < 0) {
+      if (wristpos.z < 0) joint4_angle += 180
+      else joint4_angle -= 180
+    }
+    var joint5_angle = (((math.asin(R3_6[2][2]) * 57.2957795)) - 90) * nasobok
+    var joint6_angle = (math.atan(-R3_6[2][1] / R3_6[2][0]) * 57.2957795)
+
+    UHLY[3] = joint4_angle
+    UHLY[4] = joint5_angle
+    UHLY[5] = joint6_angle
+
+    JOINTS[6].getWorldPosition(pos)
+    JOINTS[5].getWorldPosition(pos2)
+    /*if (target.position.y < pos2.y) {
+      UHLY[4] *= -1
+      joint5_angle *= -1
+    }*/
+
+
+    var docasne = [Math.round(joint1_angle * 100) / 100, Math.round(joint2_angle * 100) / 100, Math.round(joint3_angle * 100) / 100, Math.round(joint4_angle * 100) / 100, Math.round(joint5_angle * 100) / 100, Math.round(joint6_angle * 100) / 100]
+    for (let i = 0; i < UHLY.length; i++) UHLY[i] = Math.round(UHLY[i] * 100) / 100
+
+    //console.log(`CONST jointtarget JointTarget_${TRAJECTORY.length}:=[[${UHLY}],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];`)
+    //console.log(`MoveAbsJ JointTarget_${TRAJECTORY.length},v100,z1,tool0\WObj:=wobj0;`)
+
+    s
+    if (record) {
+      JOINTS[6].getWorldPosition(pos)
+      const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+      const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+      const dad = new THREE.Mesh(geometry, material);
+      dad.position.set(pos.x, pos.y, pos.z)
+      scene.add(dad);
+      if (!showtraj) dad.visible = false
+      TRAJECTORY.push(dad)
+      trajectory_angles.push(docasne)
+    }
+    update_robot()
+  }
+
+}
+
+
 function get_constant_jacobian() {
-  // calculate_matricies()
-  // roty.set(1, 0, 0)
-  // var rot = new THREE.Quaternion();
-  // target.getWorldQuaternion(rot)
-
-  // roty.applyQuaternion(rot)
-
-  // JOINTS[JOINTS.length - 1].getWorldPosition(pos)  //length of last link
-  // JOINTS[5].getWorldPosition(pos2)
-  // rozdiel = Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2 + (pos.z - pos2.z) ** 2)
-
-  // pos2.set(pos.x - pos2.x, pos.y - pos2.y, pos.z - pos2.z)
-
-  // var x = target.position.x - (roty.x * rozdiel)  //WRIST POSITION
-  // var y = target.position.y - (roty.y * rozdiel)
-  // var z = target.position.z - (roty.z * rozdiel)
-  // wristpos.set(x, y, z)
-
-  // var joint1_angle = Math.atan2(-z, x) * 57.2957795
-  // UHLY[0] = joint1_angle
-
-  // var l0 = LINES[0].geometry.parameters.path.points[1].distanceTo(LINES[0].geometry.parameters.path.points[0])
-  // var l1 = LINES[1].geometry.parameters.path.points[1].distanceTo(LINES[1].geometry.parameters.path.points[0])
-  // var l2 = LINES[2].geometry.parameters.path.points[1].distanceTo(LINES[2].geometry.parameters.path.points[0])
-  // var l3 = LINES[3].geometry.parameters.path.points[1].distanceTo(LINES[3].geometry.parameters.path.points[0])
-
-  // JOINTS[1].getWorldPosition(pos)
-  // var r = x - pos.x
-  // var alpha = math.atan2(y - l0, r) // x - JOINTS[1].position.x (world)
-
-  // var s = Math.sqrt((y - l0) ** 2 + r ** 2)
-  // var l4 = Math.sqrt(l2 ** 2 + l3 ** 2)
-  // var beta = math.acos((l1 ** 2 + s ** 2 - l4 ** 2) / (2 * l1 * s))
-  // var joint2_angle = ((Math.PI / 2) - beta - alpha)
-  // UHLY[1] = -joint2_angle * 57.2957795
-
-
-  // var gamma = math.acos((l1 ** 2 + l4 ** 2 - s ** 2) / (2 * l1 * l4))
-  // var theta = math.atan(l3 / l2)
-
-  // var joint3_angle = Math.PI - gamma - theta
-  // UHLY[2] = -joint3_angle * 57.2957795
-
-
-  // var target_rotation = new THREE.Matrix4()
-  // target_rotation.makeRotationFromEuler(target.rotation)
-
-  // var a = new THREE.Matrix3()
-  // a.setFromMatrix4(target_rotation)
-
-  // var R0_6 = [[a.elements[0], a.elements[1], a.elements[2]],
-  // [a.elements[3], a.elements[4], a.elements[5]],
-  // [a.elements[6], a.elements[7], a.elements[8]]]
-
-  // a = hom_from_0[2]
-
-  // var R0_3 = [[a[0][0], a[0][1], a[0][2]],
-  // [a[1][0], a[1][1], a[1][2]],
-  // [a[2][0], a[2][1], a[2][2]]]
-
-  // var R0_3inv = math.inv(R0_3)
-
-  // var R3_6 = math.multiply(R0_3inv, R0_6)
-
-  // UHLY[4] = math.asin(R3_6[2][2]) * 57.2957795
-
-  // JOINTS[4].getWorldPosition(pos)
-
-
-  /*var a = hom_from_0[hom_from_0.length - 1]
-  var b = hom_from_0[2]
-
-  var r06 = [[a[0][0], a[0][1], a[0][2]],
-  [a[1][0], a[1][1], a[1][2]],
-  [a[2][0], a[2][1], a[2][2]]]
-
-  var r03 = [[b[0][0], b[0][1], b[0][2]],
-  [b[1][0], b[1][1], b[1][2]],
-  [b[2][0], b[2][1], b[2][2]]]
-
-  var r03inv = math.inv(r03)
-
-  var r36 = math.multiply(r03inv, r06)
-
-  UHLY[4] = math.asin(r36[2][2]) * 57.2957795*/
-
-
-  //update_robot()
-
-
-  // var lineMaterial = new THREE.MeshStandardMaterial({ opacity: 0 });
-  // let endVector = wristpos;
-  // let startVector = pos;
-  // var linePoints = []
-  // linePoints.push(startVector, endVector);
-
-  // var tubeGeometry = new THREE.TubeGeometry(
-  //   new THREE.CatmullRomCurve3(linePoints),
-  //   512,// path segments
-  //   2,// THICKNESS
-  //   6, //Roundness of Tube
-  //   false //closed
-  // );
-  // let line = new THREE.Line(tubeGeometry, lineMaterial);
-  // //line.rotation.x = Math.PI / 2
-  // line.receiveLight = false
-  // scene.add(line)
-
   if (obalka.containsPoint(target.position)) {
-    $(".close").click() //closes not in read alert
+    $(".close").click() //closes not in reach alert
     calculate_matricies()
     JOINTS[JOINTS.length - 1].getWorldPosition(pos)
     var xpos = target.position.x
@@ -609,17 +681,22 @@ function get_slow_down_jacobian(slow_down, plot) {
   }
 }
 
-
 function make_target() {
   let geometry = new THREE.BoxGeometry(4.4, 4.4, 4.4);
   let material = new THREE.MeshPhongMaterial({ color: 0x000000, emissive: 0xff0000, shininess: 10, opacity: 0.5, transparent: true })
 
   target = new THREE.Mesh(geometry, material);
-  target.position.set(10, 10, 10)
+  JOINTS[JOINTS.length - 1].getWorldPosition(pos)
+  target.position.set(pos.x, pos.y, pos.z)
+
+  var quaternion = new THREE.Quaternion();
+  JOINTS[JOINTS.length - 1].getWorldQuaternion(quaternion)
+  target.setRotationFromQuaternion(quaternion)
   scene.add(target)
 
   const axesHelper = new THREE.AxesHelper(10);
   target.add(axesHelper);
+
 
   const controlsManager = new FreeformControls.ControlsManager(camera, renderer.domElement);
   scene.add(controlsManager);
@@ -632,23 +709,22 @@ function make_target() {
     rotationRadiusScale: 3,
     eyeRotationRadiusScale: 3.5,
     translationDistanceScale: 2.5
-
   });
 
-  moves.translationZP.scale.set(10, 10, 10)
-  moves.translationZN.scale.set(10, 10, 10)
-  moves.translationYP.scale.set(10, 10, 10)
-  moves.translationYN.scale.set(10, 10, 10)
-  moves.translationXP.scale.set(10, 10, 10)
-  moves.translationXN.scale.set(10, 10, 10)
+  moves.translationZP.scale.set(15, 15, 15)
+  moves.translationZN.scale.set(15, 15, 15)
+  moves.translationYP.scale.set(15, 15, 15)
+  moves.translationYN.scale.set(15, 15, 15)
+  moves.translationXP.scale.set(15, 15, 15)
+  moves.translationXN.scale.set(15, 15, 15)
 
 
   moves.translationXP.visible = true;
-  moves.translationXN.visible = false;
+  moves.translationXN.visible = true;
   moves.translationYP.visible = true;
-  moves.translationYN.visible = false;
+  moves.translationYN.visible = true;
   moves.translationZP.visible = true;
-  moves.translationZN.visible = false;
+  moves.translationZN.visible = true;
   moves.rotationX.visible = false;
   moves.rotationY.visible = false;
   moves.rotationZ.visible = false;
@@ -674,20 +750,35 @@ function make_target() {
     orbit.enabled = true;
   });
 
-  controlsManager.listen(FreeformControls.EVENTS.DRAG, (object, handleName) => {
-    rozdiel = Math.sqrt((target.position.x - X[X.length - 1]) ** 2 + (target.position.y - Y[X.length - 1]) ** 2 + (target.position.z - Z[X.length - 1]) ** 2)
-    if (rozdiel < 5) precision = 2
-    else {
-      if (adset.precision == "Medium") precision = 25
-      else if (adset.precision == "Low") precision = 15
-      else precision = 30
-    }
-    if (activeIK.active) {
-      get_constant_jacobian()
-    }
+  if (arrayEquals(Types, [1, 2, 2, 3, 2, 3, 4])) {
+    controlsManager.listen(FreeformControls.EVENTS.DRAG, (object, handleName) => {
+      rozdiel = Math.sqrt((target.position.x - X[X.length - 1]) ** 2 + (target.position.y - Y[X.length - 1]) ** 2 + (target.position.z - Z[X.length - 1]) ** 2)
+      if (rozdiel < 5) precision = 1
+      else {
+        if (adset.precision == "Medium") precision = 25
+        else if (adset.precision == "Low") precision = 15
+        else precision = 30
+      }
+      if (activeIK.active) {
+        get_constant_jacobian6DOF()
+      }
+    });
+  }
 
-
-  });
+  else {
+    controlsManager.listen(FreeformControls.EVENTS.DRAG, (object, handleName) => {
+      rozdiel = Math.sqrt((target.position.x - X[X.length - 1]) ** 2 + (target.position.y - Y[X.length - 1]) ** 2 + (target.position.z - Z[X.length - 1]) ** 2)
+      if (rozdiel < 5) precision = 1
+      else {
+        if (adset.precision == "Medium") precision = 25
+        else if (adset.precision == "Low") precision = 15
+        else precision = 30
+      }
+      if (activeIK.active) {
+        get_constant_jacobian()
+      }
+    });
+  }
 
 }
 
@@ -714,6 +805,7 @@ function make_sphere() {
   const sphere = new THREE.Mesh(geometry, material);
   sphere.receiveShadow = true
   sphere.castShadow = true
+  sphere.rotation.set(JOINTS[JOINTS.length - 1].rotation.x, JOINTS[JOINTS.length - 1].rotation.y, JOINTS[JOINTS.length - 1].rotation.z)
   sphere.userData.sphere = true
   sphere.userData.notDestroy = true
   return sphere
@@ -757,21 +849,27 @@ function make_robot() {
       cylinder.add(axesHelper);
     }
     else var cylinder = make_joint()
-
+    // const axesHelper = new THREE.AxesHelper(10);
+    // cylinder.add(axesHelper);
     scene.add(cylinder)
     cylinder.userData.name = `${i}`
+    JOINTS.push(cylinder)
 
-    if (Types[i] == 3) {
-      cylinder.rotateZ(Math.PI / 2)
-      AXIS[i].applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2)
-    }
-    else if (Types[i] == 2) {
-      cylinder.rotateX(Math.PI / 2)
-      AXIS[i].applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2)
-    }
+
+    pos.set(0, 1, 0)
+    var q = new THREE.Quaternion()
+    JOINTS[i - 1].getWorldQuaternion(q)
+    pos.applyQuaternion(q)
+    cylinder.setRotationFromQuaternion(q)
+    cylinder.rotateOnWorldAxis(pos, THETAS[i - 1])
+
+    pos.set(1, 0, 0)
+    JOINTS[i].getWorldQuaternion(q)
+    pos.applyQuaternion(q)
+    cylinder.setRotationFromQuaternion(q)
+    cylinder.rotateOnWorldAxis(pos, ALFAS[i - 1])
 
     cylinder.position.set(e[0], e[2], e[1])
-    JOINTS.push(cylinder)
     if (i < dis_from_0.length) {
       cubeFolder.add(controls, 'rotation', -180, 180)
         .name(`Joint ${i + 1}`)
@@ -873,8 +971,6 @@ function calculate_matricies() {
     var dis = [xStart, yStart, zStart]
     dis_from_0.push(dis)
   });
-
-  document.querySelector(".precision-value").max = TRAJECTORY.length - 1
 }
 
 
@@ -895,9 +991,11 @@ function alerts(text) {
 
 function update_robot() {
   for (let v = 0; v < UHLY.length; v++) {
-    JOINTS[v].rotateY(UHLY[v] * 0.0174532925 - ROTATIONS[v].prev)
-    ROTATIONS[v].prev = UHLY[v] * 0.0174532925
-    ROTATIONS[v].rotation = UHLY[v]
+    if (!isNaN(UHLY[v])) {
+      JOINTS[v].rotateY(UHLY[v] * 0.0174532925 - ROTATIONS[v].prev)
+      ROTATIONS[v].prev = UHLY[v] * 0.0174532925
+      ROTATIONS[v].rotation = UHLY[v]
+    }
   }
   for (var ci = 0; ci < Object.keys(gui.__folders).length; ci++) {
     var key = Object.keys(gui.__folders)[ci];
@@ -909,6 +1007,8 @@ function update_robot() {
   document.querySelector(".xpos").innerHTML = `X: ${Math.round(pos.x * 100) / 100}cm`
   document.querySelector(".ypos").innerHTML = `Y: ${Math.round(pos.y * 100) / 100}cm`
   document.querySelector(".zpos").innerHTML = `Z: ${Math.round(pos.z * 100) / 100}cm`
+
+  document.querySelector(".precision-value").max = TRAJECTORY.length - 1
 }
 
 // fis>kus
