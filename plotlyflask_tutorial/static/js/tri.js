@@ -165,23 +165,25 @@ function init() {
   }
   else if (arrayEquals(Types, [1, 2, 2, 3, 2, 3, 4]) && DH[0][1] > 0) nasobok = -1
 
-  for (let i = 0; i < DH.length; i++) {
-    THETAS.push(DH[i][0] * 0.0174532925)
-    ALFAS.push(DH[i][1] * 0.0174532925)
-    Rs.push(DH[i][2])
-    Ds.push(DH[i][3])
-    FOR_USER_ANGLES2.push([])
-    UHLY.push(0)
-    PREV.push(0)
-    MAX_ANGLES.push(Infinity)
-    AXIS.push(new THREE.Vector3(0, 1, 0))
-  }
+  if (typeof (DH) != 'undefined') {
+    for (let i = 0; i < DH.length; i++) {
+      THETAS.push(DH[i][0] * 0.0174532925)
+      ALFAS.push(DH[i][1] * 0.0174532925)
+      Rs.push(DH[i][2])
+      Ds.push(DH[i][3])
+      FOR_USER_ANGLES2.push([])
+      UHLY.push(0)
+      PREV.push(0)
+      MAX_ANGLES.push(Infinity)
+      AXIS.push(new THREE.Vector3(0, 1, 0))
+    }
 
-  calculate_matricies()
-  make_robot()
-  make_trajectory()
-  make_target()
-  make_more_settings()
+    calculate_matricies()
+    make_robot()
+    make_trajectory()
+    make_target()
+    make_more_settings()
+  }
 }
 
 function make_more_settings() {

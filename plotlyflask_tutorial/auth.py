@@ -63,10 +63,6 @@ def login_dizajn():
                 if check_password_hash(user.password, password):
                     login_user(user, remember=True)
                     return redirect("/account")
-                else:
-                    flash("Wrong password, try again.", category="error")
-            else:
-                flash("Email doesn't belong to any account.", category="error")
 
         else:
             if user:
@@ -108,8 +104,6 @@ def login_help():
                 return redirect("/account")
             else:
                 flash("Wrong password, try again.", category="error")
-        else:
-            flash("Email doesn't belong to any account.", category="error")
 
         if user:
             flash("Account with this email already exists.", category="error")
@@ -148,8 +142,6 @@ def login_homde():
                 return redirect("/account")
             else:
                 flash("Wrong password, try again.", category="error")
-        else:
-            flash("Email doesn't belong to any account.", category="error")
 
         if user:
             flash("Account with this email already exists.", category="error")
@@ -188,8 +180,6 @@ def login_home():
                 return redirect("/account")
             else:
                 flash("Wrong password, try again.", category="error")
-        else:
-            flash("Email doesn't belong to any account.", category="error")
 
         if user:
             flash("Account with this email already exists.", category="error")
@@ -229,8 +219,6 @@ def logidn_home():
                 return redirect("/account")
             else:
                 flash("Wrong password, try again.", category="error")
-        else:
-            flash("Email doesn't belong to any account.", category="error")
 
         if user:
             flash("Account with this email already exists.", category="error")
@@ -269,8 +257,6 @@ def logidn_three():
                 return redirect("/account")
             else:
                 flash("Wrong password, try again.", category="error")
-        else:
-            flash("Email doesn't belong to any account.", category="error")
 
         if user:
             flash("Account with this email already exists.", category="error")
