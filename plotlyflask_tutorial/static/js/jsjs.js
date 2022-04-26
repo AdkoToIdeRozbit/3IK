@@ -812,8 +812,8 @@ function add_event_listener(element, object) {
     else if (typeof JOINTS[index + 1] == "undefined") {   //last obj
       if (event.value == false) {
         connect_joints(JOINTS[index], JOINTS[index - 1], index - 1) //create lines
-        create_table()
         create_id()
+        create_table()
       }
       else {
         connect_joints('', '', index)   //destroy them
@@ -824,15 +824,14 @@ function add_event_listener(element, object) {
       if (event.value == false) { // somwhere in the middle
         connect_joints(JOINTS[index], JOINTS[index + 1], index)  //create lines
         connect_joints(JOINTS[index], JOINTS[index - 1], index - 1)  //create lines
-        create_table()
         create_id()
+        create_table()
       }
       else {
         connect_joints('', '', index)  //destroy
         connect_joints('', '', index - 1)  //destroy
       }
     }
-
   })
 };
 
@@ -1042,6 +1041,7 @@ function create_id() {
 let DH_params = []
 
 function create_table() {
+  console.log("a")
   for (let i = 0; i < JOINTS.length - 1; i++) {
     if (typeof JOINTS[i].children.rotation != 'undefined') {
       if (document.getElementById(`${i}in`) > 0) {
@@ -1092,9 +1092,9 @@ let ydir = new THREE.Vector3(0, 0, -1)
 let zdir = new THREE.Vector3(0, 1, 0)
 let DH = []
 var robotvec = new THREE.Vector3
+var pos2 = new THREE.Vector3
 
 function calculate_dh(y) {    // each time controls are added or changed recalculate....
-
   xdir.applyEuler(JOINTS[y].children.rotation)
   xdir.applyEuler(JOINTS[y].rotation)
   let X0dir = xdir.clone()
@@ -1146,17 +1146,19 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
   if (!z0dir.equals(z1dir)) alfa *= -1
   alfa = Math.round(alfa * 57.2957795)
 
+  JOINTS[y].getWorldPosition(pos)
+  JOINTS[y + 1].getWorldPosition(pos2)
 
-  let xbegin = LINES[y].geometry.parameters.path.points[0].x
-  let xend = LINES[y].geometry.parameters.path.points[1].x
+  let xbegin = pos2.x
+  let xend = pos.x
   let xvec = xend - xbegin
 
-  let ybegin = LINES[y].geometry.parameters.path.points[0].y
-  let yend = LINES[y].geometry.parameters.path.points[1].y
+  let ybegin = pos2.y
+  let yend = pos.y
   let yvec = yend - ybegin
 
-  let zbegin = LINES[y].geometry.parameters.path.points[0].z
-  let zend = LINES[y].geometry.parameters.path.points[1].z
+  let zbegin = pos2.z
+  let zend = pos.z
   let zvec = zend - zbegin
 
   var Linevec = new THREE.Vector3(xvec, yvec, zvec)
@@ -1166,7 +1168,6 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
   Linevec.z *= parseFloat(inputtext[y])
 
   robotvec.add(Linevec)
-
   var rvalue = robotvec.length()
   /*if (isNaN(parseFloat(inputtext[y]))) rvalue = 0
   else rvalue = parseFloat(inputtext[y])*/
@@ -1177,7 +1178,9 @@ function calculate_dh(y) {    // each time controls are added or changed recalcu
   let dangle = Math.cos(Z0dir.angleTo(Linevec))
   var d = Math.abs(Math.round(dangle * rvalue * 100) / 100)
 
-  if (r != 0 || d != 0) robotvec.set(0, 0, 0)
+  if (r > 0 || d > 0) {
+    robotvec.set(0, 0, 0)
+  }
 
   DH.splice(y, 1)
   DH.splice(y, 0, [theta, alfa, r, d])
