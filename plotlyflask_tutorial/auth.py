@@ -63,6 +63,10 @@ def login_dizajn():
                 if check_password_hash(user.password, password):
                     login_user(user, remember=True)
                     return redirect("/account")
+                else:
+                    flash("Wrong password, try again.", category="error")
+            else:
+                flash("Email doesn't belong to any account.", category="error")
 
         else:
             if user:
@@ -98,30 +102,36 @@ def login_help():
         password2 = request.form.get("password2")
         print(first_name, password1, password2)
         user = User.query.filter_by(email=email).first()
-        if user:
-            if check_password_hash(user.password, password):
-                login_user(user, remember=True)
-                return redirect("/account")
+        if(password != None):
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user, remember=True)
+                    return redirect("/account")
+                else:
+                    flash("Wrong password, try again.", category="error")
             else:
-                flash("Wrong password, try again.", category="error")
-
-        if user:
-            flash("Account with this email already exists.", category="error")
-        elif password1 != password2:
-            flash("Passwords don't match.", category="error")
-        elif len(password1) < 3:
-            flash("Password must be at least 4 characters long", category="error")
+                flash("Email doesn't belong to any account.", category="error")
 
         else:
-            new_user = User(
-                email=email,
-                first_name=first_name,
-                password=generate_password_hash(password1, method="sha256"),
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            return redirect("/account")
+            if user:
+                flash("Account with this email already exists.", category="error")
+            elif password1 != password2:
+                flash("Passwords don't match.", category="error")
+            elif len(password1) < 3:
+                flash("Password must be at least 4 characters long",
+                      category="error")
+
+            else:
+                new_user = User(
+                    email=email,
+                    first_name=first_name,
+                    password=generate_password_hash(
+                        password1, method="sha256"),
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user, remember=True)
+                return redirect("/account")
 
     return render_template("help.html", user=current_user)
 
@@ -136,30 +146,36 @@ def login_homde():
         password2 = request.form.get("password2")
         print(first_name, password1, password2)
         user = User.query.filter_by(email=email).first()
-        if user:
-            if check_password_hash(user.password, password):
-                login_user(user, remember=True)
-                return redirect("/account")
+        if(password != None):
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user, remember=True)
+                    return redirect("/account")
+                else:
+                    flash("Wrong password, try again.", category="error")
             else:
-                flash("Wrong password, try again.", category="error")
-
-        if user:
-            flash("Account with this email already exists.", category="error")
-        elif password1 != password2:
-            flash("Passwords don't match.", category="error")
-        elif len(password1) < 3:
-            flash("Password must be at least 4 characters long", category="error")
+                flash("Email doesn't belong to any account.", category="error")
 
         else:
-            new_user = User(
-                email=email,
-                first_name=first_name,
-                password=generate_password_hash(password1, method="sha256"),
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            return redirect("/account")
+            if user:
+                flash("Account with this email already exists.", category="error")
+            elif password1 != password2:
+                flash("Passwords don't match.", category="error")
+            elif len(password1) < 3:
+                flash("Password must be at least 4 characters long",
+                      category="error")
+
+            else:
+                new_user = User(
+                    email=email,
+                    first_name=first_name,
+                    password=generate_password_hash(
+                        password1, method="sha256"),
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user, remember=True)
+                return redirect("/account")
 
     return render_template("three.html", user=current_user)
 
@@ -174,30 +190,36 @@ def login_home():
         password2 = request.form.get("password2")
         print(first_name, password1, password2)
         user = User.query.filter_by(email=email).first()
-        if user:
-            if check_password_hash(user.password, password):
-                login_user(user, remember=True)
-                return redirect("/account")
+        if(password != None):
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user, remember=True)
+                    return redirect("/account")
+                else:
+                    flash("Wrong password, try again.", category="error")
             else:
-                flash("Wrong password, try again.", category="error")
-
-        if user:
-            flash("Account with this email already exists.", category="error")
-        elif password1 != password2:
-            flash("Passwords don't match.", category="error")
-        elif len(password1) < 3:
-            flash("Password must be at least 4 characters long", category="error")
+                flash("Email doesn't belong to any account.", category="error")
 
         else:
-            new_user = User(
-                email=email,
-                first_name=first_name,
-                password=generate_password_hash(password1, method="sha256"),
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            return redirect("/account")
+            if user:
+                flash("Account with this email already exists.", category="error")
+            elif password1 != password2:
+                flash("Passwords don't match.", category="error")
+            elif len(password1) < 3:
+                flash("Password must be at least 4 characters long",
+                      category="error")
+
+            else:
+                new_user = User(
+                    email=email,
+                    first_name=first_name,
+                    password=generate_password_hash(
+                        password1, method="sha256"),
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user, remember=True)
+                return redirect("/account")
 
     return render_template("home.html", user=current_user)
 
@@ -213,30 +235,36 @@ def logidn_home():
         password2 = request.form.get("password2")
         print(first_name, password1, password2)
         user = User.query.filter_by(email=email).first()
-        if user:
-            if check_password_hash(user.password, password):
-                login_user(user, remember=True)
-                return redirect("/account")
+        if(password != None):
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user, remember=True)
+                    return redirect("/account")
+                else:
+                    flash("Wrong password, try again.", category="error")
             else:
-                flash("Wrong password, try again.", category="error")
-
-        if user:
-            flash("Account with this email already exists.", category="error")
-        elif password1 != password2:
-            flash("Passwords don't match.", category="error")
-        elif len(password1) < 3:
-            flash("Password must be at least 4 characters long", category="error")
+                flash("Email doesn't belong to any account.", category="error")
 
         else:
-            new_user = User(
-                email=email,
-                first_name=first_name,
-                password=generate_password_hash(password1, method="sha256"),
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            return redirect("/account")
+            if user:
+                flash("Account with this email already exists.", category="error")
+            elif password1 != password2:
+                flash("Passwords don't match.", category="error")
+            elif len(password1) < 3:
+                flash("Password must be at least 4 characters long",
+                      category="error")
+
+            else:
+                new_user = User(
+                    email=email,
+                    first_name=first_name,
+                    password=generate_password_hash(
+                        password1, method="sha256"),
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user, remember=True)
+                return redirect("/account")
 
     return render_template("account.html", user=current_user)
 
@@ -251,29 +279,35 @@ def logidn_three():
         password2 = request.form.get("password2")
         print(first_name, password1, password2)
         user = User.query.filter_by(email=email).first()
-        if user:
-            if check_password_hash(user.password, password):
-                login_user(user, remember=True)
-                return redirect("/account")
+        if(password != None):
+            if user:
+                if check_password_hash(user.password, password):
+                    login_user(user, remember=True)
+                    return redirect("/account")
+                else:
+                    flash("Wrong password, try again.", category="error")
             else:
-                flash("Wrong password, try again.", category="error")
-
-        if user:
-            flash("Account with this email already exists.", category="error")
-        elif password1 != password2:
-            flash("Passwords don't match.", category="error")
-        elif len(password1) < 3:
-            flash("Password must be at least 4 characters long", category="error")
+                flash("Email doesn't belong to any account.", category="error")
 
         else:
-            new_user = User(
-                email=email,
-                first_name=first_name,
-                password=generate_password_hash(password1, method="sha256"),
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            return redirect("/account")
+            if user:
+                flash("Account with this email already exists.", category="error")
+            elif password1 != password2:
+                flash("Passwords don't match.", category="error")
+            elif len(password1) < 3:
+                flash("Password must be at least 4 characters long",
+                      category="error")
+
+            else:
+                new_user = User(
+                    email=email,
+                    first_name=first_name,
+                    password=generate_password_hash(
+                        password1, method="sha256"),
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user, remember=True)
+                return redirect("/account")
 
     return render_template("three.html", user=current_user)
