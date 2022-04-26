@@ -59,7 +59,6 @@ wrapper[0].addEventListener('click', (event) => {
     note_id = note_id.slice(39)
     var id = $(`.note_data_text${note_id}`).text()
     id = id.slice(4)
-    console.log(id)
     Code(id)
   }
   else return;
@@ -74,7 +73,6 @@ function Code(id) {
   for (let i = 0; i < JOINTS.length - 1; i++) calculate_dh(i)
   window.localStorage.setItem('DH', JSON.stringify(DH));
   window.localStorage.setItem('TYPES', JSON.stringify(Types));
-  console.log(DH)
 }
 
 
