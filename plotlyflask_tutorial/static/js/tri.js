@@ -96,9 +96,7 @@ var nasobok = 1
 
 function onWindowResize() {
   Height = window.innerHeight * 0.9;
-  var mq = window.matchMedia("(max-width: 1000px)");
-  if (mq.matches) Width = window.innerWidth * 0.92;
-  else Width = window.innerWidth * 0.92;
+  Width = window.innerWidth * 0.92;
   renderer.setSize(Width, Height);
   camera.aspect = Width / Height;
   camera.updateProjectionMatrix();
@@ -115,9 +113,7 @@ function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 
   Height = window.innerHeight * 0.9;
-  var mq = window.matchMedia("(max-width: 1000px)");
-  if (mq.matches) Width = window.innerWidth * 0.92;
-  else Width = window.innerWidth * 0.92;
+  Width = window.innerWidth * 0.92;
 
   renderer.setSize(Width, Height);
   renderer.setPixelRatio(window.devicePixelRatio);
