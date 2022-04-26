@@ -246,6 +246,14 @@ function make_more_settings() {
   if (arrayEquals(Types, [1, 2, 2, 3, 2, 3, 4])) {
     obj = {
       add: function () {
+        JOINTS[JOINTS.length - 1].getWorldPosition(pos)
+        rozdiel = Math.sqrt((target.position.x - pos.x) ** 2 + (target.position.y - pos.y) ** 2 + (target.position.z - pos.z) ** 2)
+        if (rozdiel < 5) precision = 1
+        else {
+          if (adset.precision == "Medium") precision = 25
+          else if (adset.precision == "Low") precision = 15
+          else precision = 30
+        }
         get_constant_jacobian6DOF()
       }
     };
@@ -253,6 +261,14 @@ function make_more_settings() {
   else {
     obj = {
       add: function () {
+        JOINTS[JOINTS.length - 1].getWorldPosition(pos)
+        rozdiel = Math.sqrt((target.position.x - pos.x) ** 2 + (target.position.y - pos.y) ** 2 + (target.position.z - pos.z) ** 2)
+        if (rozdiel < 5) precision = 1
+        else {
+          if (adset.precision == "Medium") precision = 25
+          else if (adset.precision == "Low") precision = 15
+          else precision = 30
+        }
         get_constant_jacobian()
       }
     };
@@ -481,10 +497,10 @@ function get_constant_jacobian6DOF() {
     //console.log(`CONST jointtarget JointTarget_${TRAJECTORY.length}:=[[${UHLY}],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];`)
     //console.log(`MoveAbsJ JointTarget_${TRAJECTORY.length},v100,z1,tool0\WObj:=wobj0;`)
 
-    s
+    console.log(precision)
     if (record) {
       JOINTS[6].getWorldPosition(pos)
-      const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+      const geometry = new THREE.SphereGeometry(0.2, 32, 16);
       const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
       const dad = new THREE.Mesh(geometry, material);
       dad.position.set(pos.x, pos.y, pos.z)
@@ -553,7 +569,7 @@ function get_constant_jacobian() {
       //console.log(UHLY)
       rozdiel = Math.sqrt((xpos - X[X.length - 1]) ** 2 + (ypos - Y[X.length - 1]) ** 2 + (zpos - Z[X.length - 1]) ** 2)
       if (record) {
-        const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+        const geometry = new THREE.SphereGeometry(0.2, 32, 16);
         const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
         const dad = new THREE.Mesh(geometry, material);
         dad.position.set(X[X.length - 1], Y[X.length - 1], Z[X.length - 1])
@@ -750,7 +766,8 @@ function make_target() {
 
   if (arrayEquals(Types, [1, 2, 2, 3, 2, 3, 4])) {
     controlsManager.listen(FreeformControls.EVENTS.DRAG, (object, handleName) => {
-      rozdiel = Math.sqrt((target.position.x - X[X.length - 1]) ** 2 + (target.position.y - Y[X.length - 1]) ** 2 + (target.position.z - Z[X.length - 1]) ** 2)
+      JOINTS[JOINTS.length - 1].getWorldPosition(pos)
+      rozdiel = Math.sqrt((target.position.x - pos.x) ** 2 + (target.position.y - pos.y) ** 2 + (target.position.z - pos.z) ** 2)
       if (rozdiel < 5) precision = 1
       else {
         if (adset.precision == "Medium") precision = 25
