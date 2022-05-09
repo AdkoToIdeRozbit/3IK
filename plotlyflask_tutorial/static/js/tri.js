@@ -1,13 +1,8 @@
 import * as THREE from "https://threejs.org/build/three.module.js"
 import { GUI } from "./modules//dat.gui/build/dat.gui.module.js"
-
 import * as FreeformControls from "./modules/three-freeform-controls/dist/three-freeform-controls.js";
-
-import { TransformControls } from "./modules/TransformControls.js"
 import { OrbitControls } from "./modules/OrbitControls.js"
-import { GLTFLoader } from "./modules/GLTFLoader.js"
-import { FontLoader } from "./modules/FontLoader.js"
-import { CSS3DRenderer, CSS3DObject } from './modules/CSS3DRenderer.js'
+
 
 var scene, renderer, camera;
 var cube;
@@ -78,7 +73,7 @@ var trajectory_angles = []
 document.getElementById("get_angles").addEventListener("click", function () {   // output angles for trajecyory
   if (trajectory_angles.length > 0) {
     $(".output_angles").html(JSON.stringify(trajectory_angles))
-    $(".output_angles").height(300)
+    $(".output_angles").height(250)
   }
   else {
     $(".output_angles").html('')
@@ -100,8 +95,11 @@ function onWindowResize() {
   renderer.setSize(Width, Height);
   camera.aspect = Width / Height;
   camera.updateProjectionMatrix();
-  $('#div').height(renderer.domElement.height);
-  $('#div').width(renderer.domElement.width);
+
+  document.getElementById("div").style.height = `${renderer.domElement.height}px`;
+  document.getElementById("div").style.width = `${renderer.domElement.width}px`;
+  /*$('#div').height(renderer.domElement.height);
+  $('#div').width(renderer.domElement.width);*/
 }
 window.addEventListener('resize', onWindowResize);
 
@@ -128,8 +126,10 @@ function init() {
   orbit = new OrbitControls(camera, renderer.domElement);
   $("#div").append(renderer.domElement)
 
-  $('#div').height(renderer.domElement.height);
-  $('#div').width(renderer.domElement.width);
+  document.getElementById("div").style.height = `${renderer.domElement.height}px`;
+  document.getElementById("div").style.width = `${renderer.domElement.width}px`;
+  /*$('#div').height(renderer.domElement.height);
+  $('#div').width(renderer.domElement.width);*/
   renderer.domElement.style.position = 'absolute';
 
   var gridXZ = new THREE.GridHelper(100, 10, new THREE.Color(0xff0000), new THREE.Color(0xffffff));
