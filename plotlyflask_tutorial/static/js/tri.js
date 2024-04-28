@@ -1,10 +1,12 @@
-import * as THREE from "https://threejs.org/build/three.module.js"
+// import * as THREE from "https://threejs.org/build/three.module.js"
 import { GUI } from "./modules//dat.gui/build/dat.gui.module.js"
 import { TransformControls } from "./modules/TransformControls.js"
 import { OrbitControls } from "./modules/OrbitControls.js"
 import { GLTFLoader } from "./modules/GLTFLoader.js"
 import { FontLoader } from "./modules/FontLoader.js"
 import { CSS3DRenderer, CSS3DObject } from './modules/CSS3DRenderer.js'
+
+
 
 var scene, renderer, camera;
 var cube;
@@ -107,9 +109,11 @@ function init() {
 
 
   DH = JSON.parse(localStorage.getItem("DH"))
-  //DH = [[0, -90, 0, 29], [-90, 0, 27, 0], [0, -90, 7, 0], [0, 90, 0, 30], [0, -90, 0, 0], [0, 0, 0, 7]]
   Types = [1, 2, 2, 4]
-  //Types = [1, 2, 2, 3, 2, 3, 4]
+
+  // DH = [[0, -90, 0, 29], [-90, 0, 27, 0], [0, -90, 7, 0], [0, 90, 0, 30], [0, -90, 0, 0], [0, 0, 0, 7]]
+  // Types = [1, 2, 2, 3, 2, 3, 4]
+
 
   for (let i = 0; i < DH.length; i++) {
     THETAS.push(DH[i][0] * 0.0174532925)
@@ -447,6 +451,7 @@ function make_robot() {
 
     scene.add(cylinder)
     cylinder.userData.name = `${i}`
+
 
     if (Types[i] == 3) {
       cylinder.rotateZ(Math.PI / 2)

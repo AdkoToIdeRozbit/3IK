@@ -1,9 +1,10 @@
-import * as THREE from "https://threejs.org/build/three.module.js"
-import { TransformControls } from "./modules/TransformControls.js"
-import { OrbitControls } from "./modules/OrbitControls.js"
-import { GLTFLoader } from "./modules/GLTFLoader.js"
-import { FontLoader } from "./modules/FontLoader.js"
-import { CSS3DRenderer, CSS3DObject } from './modules/CSS3DRenderer.js'
+// import * as THREE from "https://threejs.org/build/three.module.js"
+import { TransformControls } from "/static/js/modules/TransformControls.js"
+import { OrbitControls } from "/static/js/modules/OrbitControls.js"
+import { GLTFLoader } from "/static/js/modules/GLTFLoader.js"
+import { FontLoader } from "/static/js/modules/FontLoader.js"
+import { CSS3DRenderer, CSS3DObject } from '/static/js/modules/CSS3DRenderer.js'
+
 
 window.onload = function () {
   var compute_button = document.getElementById('compute');
@@ -166,6 +167,7 @@ camera.position.set(0.56, 63.3, 142.23);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas, alpha: true },);
+console.log(renderer)
 const renderer2 = new CSS3DRenderer({ element: div })
 
 var vector = new THREE.Vector3();

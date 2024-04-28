@@ -1,7 +1,7 @@
 import * as THREE from "https://threejs.org/build/three.module.js"
 import { TransformControls } from "./modules/TransformControls.js"
 import { OrbitControls } from "./modules/OrbitControls.js"
-import { GLTFLoader } from "./modules/GLTFLoader.js"
+// import { GLTFLoader } from "./modules/GLTFLoader.js"
 import { FontLoader } from "./modules/FontLoader.js"
 import { CSS3DRenderer, CSS3DObject } from './modules/CSS3DRenderer.js'
 
@@ -45,8 +45,8 @@ wrapper[0].addEventListener('click', (event) => {
     document.getElementById("closee").onclick = function () { cancel_changes() };
     document.getElementById("ulozit_zmeny").onclick = function () { save_changes(note_id) };
 
-    globalThis.canvas = document.getElementById('c')
-    globalThis.div = document.getElementById('d')
+    globalThis.canvas = document.getElementById('bg')
+    globalThis.div = document.getElementById('geeks')
     init_scene()
     ID_function(id)
     createFloor()
@@ -128,6 +128,7 @@ function ID_function(id) {
 }
 
 function init_scene() {
+  console.log('init')
   globalThis.scene = new THREE.Scene()
   scene.background = new THREE.Color(0xbfd1e5);
   globalThis.scene2 = new THREE.Scene()
@@ -140,6 +141,7 @@ function init_scene() {
   camera.lookAt(new THREE.Vector3(0, 0, 0));
   globalThis.renderer = new THREE.WebGLRenderer();
   globalThis.renderer2 = new CSS3DRenderer()
+
   if (!ignore) {
     globalThis.renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas },);
     globalThis.renderer2 = new CSS3DRenderer({ element: div })
@@ -177,6 +179,30 @@ function init_scene() {
   globalThis.inputtext = []
   globalThis.TEXTS = []
   globalThis.INPUTS = []
+
+  // const canvas = document.getElementById('bg');
+
+
+  // const scene = new THREE.Scene();
+  // const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+  // const renderer = new THREE.WebGLRenderer();
+  // renderer.setSize(window.innerWidth, window.innerHeight);
+  // document.body.appendChild(renderer.domElement);
+
+  // // Adding a cube
+  // const geometry = new THREE.BoxGeometry();
+  // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  // const cube = new THREE.Mesh(geometry, material);
+  // scene.add(cube);
+
+  // // Adding a light
+  // const light = new THREE.PointLight(0xffffff, 1, 100);
+  // light.position.set(10, 10, 10);
+  // scene.add(light);
+
+  // // Camera position
+  // camera.position.z = 5;
 }
 
 
@@ -231,80 +257,81 @@ function createFloor() {
 }
 
 function create_axes(cylinder, i, rotx, roty, rotz) {
-  const loader = new GLTFLoader()
-  if (!ignore) {
-    loader.load('../static/glb/axes.glb', function (gltf) {
-      let root = gltf.scene;
-      scene.add(root)
-      cylinder.children = root
-      root.parent = cylinder
-      root.scale.set(1.5, 1.5, 1.5)
-      root.position.set(- 11.5, 0, 0)
-      root.userData.name = `${i}`
-      let controls = new TransformControls(camera, renderer2.domElement)
-      controls.setMode('rotate')
-      controls.setSize(controls.size - 0.7)
-      controls.attach(root)
-      controls.setRotationSnap(Math.PI / 2)
+  return
+  // const loader = new GLTFLoader()
+  // if (!ignore) {
+  //   loader.load('../static/glb/axes.glb', function (gltf) {
+  //     let root = gltf.scene;
+  //     scene.add(root)
+  //     cylinder.children = root
+  //     root.parent = cylinder
+  //     root.scale.set(1.5, 1.5, 1.5)
+  //     root.position.set(- 11.5, 0, 0)
+  //     root.userData.name = `${i}`
+  //     let controls = new TransformControls(camera, renderer2.domElement)
+  //     controls.setMode('rotate')
+  //     controls.setSize(controls.size - 0.7)
+  //     controls.attach(root)
+  //     controls.setRotationSnap(Math.PI / 2)
 
 
-      if (cylinder.userData.three) root.position.set(0, 11.5, 0)
+  //     if (cylinder.userData.three) root.position.set(0, 11.5, 0)
 
-      if (rotx == '') rotx = 0
-      if (roty == '') roty = 0
-      if (rotz == '') rotz = 0
-      if (rotx == 2) rotx = Math.PI / 2
-      if (roty == 2) roty = Math.PI / 2
-      if (rotz == 2) rotz = Math.PI / 2
-      if (rotx == 3) rotx = Math.PI
-      if (roty == 3) roty = Math.PI
-      if (rotz == 3) rotz = Math.PI
-      if (rotx == -2) rotx = -Math.PI / 2
-      if (roty == -2) roty = -Math.PI / 2
-      if (rotz == -2) rotz = -Math.PI / 2
-      if (rotx == -3) rotx = -Math.PI
-      if (roty == -3) roty = -Math.PI
-      if (rotz == -3) rotz = -Math.PI
-      if (rotx) {
+  //     if (rotx == '') rotx = 0
+  //     if (roty == '') roty = 0
+  //     if (rotz == '') rotz = 0
+  //     if (rotx == 2) rotx = Math.PI / 2
+  //     if (roty == 2) roty = Math.PI / 2
+  //     if (rotz == 2) rotz = Math.PI / 2
+  //     if (rotx == 3) rotx = Math.PI
+  //     if (roty == 3) roty = Math.PI
+  //     if (rotz == 3) rotz = Math.PI
+  //     if (rotx == -2) rotx = -Math.PI / 2
+  //     if (roty == -2) roty = -Math.PI / 2
+  //     if (rotz == -2) rotz = -Math.PI / 2
+  //     if (rotx == -3) rotx = -Math.PI
+  //     if (roty == -3) roty = -Math.PI
+  //     if (rotz == -3) rotz = -Math.PI
+  //     if (rotx) {
 
-        root.rotation.x = -cylinder.rotation.x + rotx
-        root.rotation.y = -cylinder.rotation.y + roty
-        root.rotation.z = -cylinder.rotation.z + rotz
-      }
+  //       root.rotation.x = -cylinder.rotation.x + rotx
+  //       root.rotation.y = -cylinder.rotation.y + roty
+  //       root.rotation.z = -cylinder.rotation.z + rotz
+  //     }
 
-      scene.add(controls)
-      AXES.splice(i, 0, root)
-      CONTROLS.splice(i, 0, controls)
-      add_event_listener_rotate(controls, root)
+  //     scene.add(controls)
+  //     AXES.splice(i, 0, root)
+  //     CONTROLS.splice(i, 0, controls)
+  //     add_event_listener_rotate(controls, root)
 
-    });
-  }
-  else {
-    let root = new THREE.Mesh(new THREE.CylinderBufferGeometry(1, 1, 1, 32), new THREE.MeshPhongMaterial())
-    cylinder.children = root
-    if (cylinder.userData.three) root.position.set(0, 11.5, 0)
-    if (rotx == '') rotx = 0
-    if (roty == '') roty = 0
-    if (rotz == '') rotz = 0
-    if (rotx == 2) rotx = Math.PI / 2
-    if (roty == 2) roty = Math.PI / 2
-    if (rotz == 2) rotz = Math.PI / 2
-    if (rotx == 3) rotx = Math.PI
-    if (roty == 3) roty = Math.PI
-    if (rotz == 3) rotz = Math.PI
-    if (rotx == -2) rotx = -Math.PI / 2
-    if (roty == -2) roty = -Math.PI / 2
-    if (rotz == -2) rotz = -Math.PI / 2
-    if (rotx == -3) rotx = -Math.PI
-    if (roty == -3) roty = -Math.PI
-    if (rotz == -3) rotz = -Math.PI
-    if (rotx) {
+  //   });
+  // }
+  // else {
+  //   let root = new THREE.Mesh(new THREE.CylinderBufferGeometry(1, 1, 1, 32), new THREE.MeshPhongMaterial())
+  //   cylinder.children = root
+  //   if (cylinder.userData.three) root.position.set(0, 11.5, 0)
+  //   if (rotx == '') rotx = 0
+  //   if (roty == '') roty = 0
+  //   if (rotz == '') rotz = 0
+  //   if (rotx == 2) rotx = Math.PI / 2
+  //   if (roty == 2) roty = Math.PI / 2
+  //   if (rotz == 2) rotz = Math.PI / 2
+  //   if (rotx == 3) rotx = Math.PI
+  //   if (roty == 3) roty = Math.PI
+  //   if (rotz == 3) rotz = Math.PI
+  //   if (rotx == -2) rotx = -Math.PI / 2
+  //   if (roty == -2) roty = -Math.PI / 2
+  //   if (rotz == -2) rotz = -Math.PI / 2
+  //   if (rotx == -3) rotx = -Math.PI
+  //   if (roty == -3) roty = -Math.PI
+  //   if (rotz == -3) rotz = -Math.PI
+  //   if (rotx) {
 
-      root.rotation.x = -cylinder.rotation.x + rotx
-      root.rotation.y = -cylinder.rotation.y + roty
-      root.rotation.z = -cylinder.rotation.z + rotz
-    }
-  }
+  //     root.rotation.x = -cylinder.rotation.x + rotx
+  //     root.rotation.y = -cylinder.rotation.y + roty
+  //     root.rotation.z = -cylinder.rotation.z + rotz
+  //   }
+  // }
 }
 
 function createCylinder1(x, y, z, u, rotx, roty, rotz) {

@@ -48,6 +48,11 @@ def logout():
     return redirect("/")
 
 
+@auth.route("/test")
+def testos():
+    return render_template("test.html", user=current_user)
+
+
 @auth.route("/dizajn", methods=["GET", "POST"])
 def login_dizajn():
     if request.method == "POST":

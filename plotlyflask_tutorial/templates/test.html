@@ -1,0 +1,19 @@
+{% extends "base.html" %} {% block title %}Test {% endblock %} {% block content%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dizajn.css') }}">
+<link rel="icon" href="../static/photos/ico.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="../static/photos/ico.ico" />
+
+
+<canvas id="bg" style="width: 80vw !important; height: 80vw !important;"></canvas>
+
+<div>AHOOJ</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.0/jquery.bootstrap-growl.min.js"></script>
+
+<script type="module" src="{{ url_for('static', filename='js/test.js') }}"></script>
+
+
+{% endblock %}

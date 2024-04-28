@@ -32,3 +32,7 @@ def firstgg():
 @app.route("/three")
 def threfafafafae():
     return render_template("three.html", user=current_user)
+
+@app.route("/test")
+def test():
+    return render_template("test.html", user=current_user)

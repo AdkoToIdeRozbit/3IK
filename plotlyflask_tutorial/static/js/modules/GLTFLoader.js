@@ -60,7 +60,6 @@ import {
 	Vector2,
 	Vector3,
 	VectorKeyframeTrack,
-	sRGBEncoding
 } from "https://threejs.org/build/three.module.js"
 
 class GLTFLoader extends Loader {
@@ -1015,7 +1014,7 @@ class GLTFMaterialsSpecularExtension {
 
 			pending.push(parser.assignTexture(materialParams, 'specularColorMap', extension.specularColorTexture).then(function (texture) {
 
-				texture.encoding = sRGBEncoding;
+				// texture.encoding = sRGBEncoding;
 
 			}));
 
@@ -3245,8 +3244,8 @@ class GLTFParser {
 			if (materialDef.name) material.name = materialDef.name;
 
 			// baseColorTexture, emissiveTexture, and specularGlossinessTexture use sRGB encoding.
-			if (material.map) material.map.encoding = sRGBEncoding;
-			if (material.emissiveMap) material.emissiveMap.encoding = sRGBEncoding;
+			// if (material.map) material.map.encoding = sRGBEncoding;
+			// if (material.emissiveMap) material.emissiveMap.encoding = sRGBEncoding;
 
 			assignExtrasToUserData(material, materialDef);
 
