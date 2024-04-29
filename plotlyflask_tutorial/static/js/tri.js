@@ -1,5 +1,5 @@
-import * as THREE from "https://threejs.org/build/three.module.js"
-import { GUI } from "./modules//dat.gui/build/dat.gui.module.js"
+// import * as THREE from "https://threejs.org/build/three.module.js"
+import { GUI } from "./modules/dat.gui/build/dat.gui.module.js"
 import * as FreeformControls from "./modules/three-freeform-controls/dist/three-freeform-controls.js";
 import { OrbitControls } from "./modules/OrbitControls.js"
 

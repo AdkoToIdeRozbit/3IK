@@ -1,4 +1,3 @@
-import * as THREE from "https://threejs.org/build/three.module.js"
 import { TransformControls } from "./modules/TransformControls.js"
 import { OrbitControls } from "./modules/OrbitControls.js"
 import { GLTFLoader } from "./modules/GLTFLoader.js"
